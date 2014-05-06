@@ -18,18 +18,21 @@ public class Program extends Application{
 	public Program(){
 		loaders	= new HashMap<>();
 		scenes	= new HashMap<>();
-
+		// instantiate FXMLLoaders & scenes
 		Stream.of(Views.values()).forEach(v-> {
 			try{
 				loaders.put(v, new FXMLLoader(getClass().getResource(v.getFxmlPath())));
 				scenes.put(v, new Scene(loaders.get(v).load()));
 			}catch(IOException ex){ ex.printStackTrace(); }
+			
 		});
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception{
+		
 		primaryStage.setScene(scenes.get(Views.Login));
+		
 		primaryStage.setResizable(false);
 		primaryStage.show();
 		
@@ -38,5 +41,6 @@ public class Program extends Application{
 
 	public static void main(String args[]){
 		launch(args);
+		// launch application
 	}
 }

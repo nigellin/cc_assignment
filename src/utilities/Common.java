@@ -19,7 +19,7 @@ public class Common{
 			instance= new Common();
 
 		return instance;
-	}
+	} // singleton method
 
 	public void setPropertFile(String filePath) throws IOException{
 		try(InputStream input= new FileInputStream(filePath)){
@@ -27,16 +27,16 @@ public class Common{
 		}catch(IOException ioe){
 			throw new IOException(ioe.getMessage());
 		}
-	}
+	}// set property file
 
 	public String getProperty(String key){
 		return properties.getProperty(key);
-	}
+	}// get property values
 
 	public enum Views{
 		Login;
 		public String getFxmlPath(){ return "/views/"+ name()+ ".fxml"; }
-	}
+	}// existed views
 
 	public enum MessageType{
 		INFO(Color.CORNFLOWERBLUE),
@@ -47,5 +47,5 @@ public class Common{
 		private final Color color;
 		private MessageType(Color c){ color= c; }
 		public final Color getColor(){ return color; }
-	}
+	}// enum for message type, color value was associated
 }

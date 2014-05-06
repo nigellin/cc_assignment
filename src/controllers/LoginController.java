@@ -29,6 +29,7 @@ public class LoginController implements Initializable{
 		fileChooser.getExtensionFilters().add(
 			new ExtensionFilter("*.txt, *.conf, *.config, *.property, *.properties",
 				"*.txt", "*.conf", "*.config", "*.properties", "*.property"));
+		// initialize fileChooser & set allowed file extensions
 	}
 
 	@Override
@@ -36,14 +37,19 @@ public class LoginController implements Initializable{
 
 	public void actionKeyPressed(KeyEvent event){
 		clearMessage();
+		// clear all message text;
+		
 		switch(event.getCode()){
 			case ENTER:
 				processLogin(null);
 				break;
+				// invoke login if enter key is pressed
+				
 			case ESCAPE:
 				TextField temp= ((TextField) event.getSource());
 				temp.setText("");
 				break;
+				// clear text if escape key is pressed
 		}
 	}
 
@@ -54,21 +60,23 @@ public class LoginController implements Initializable{
 		if(keyFile== null){
 			setMessage(MessageType.WARN, "No file selected");
 			return;
-		}
+		}// selected file check, show warn message if it is null
 
 		try{
 			Common.instance().setPropertFile(keyFile.getPath());
 
 			String accessKey= Common.instance().getProperty("accessKey");
 			String secretKey= Common.instance().getProperty("secretKey");
-
+			// get property values
+			
 			if(accessKey== null || secretKey== null){
 				setMessage(MessageType.ERROR, "Required both accessKey & secretKey values");
 				return;
-			}
+			}// check property values of selected file
 
 			accessKeyField.setText(accessKey);
 			secretKeyField.setText(secretKey);
+			// set values for keyFields
 		}catch(IOException ioe){}
 
 		processLogin(event);
@@ -81,11 +89,13 @@ public class LoginController implements Initializable{
 			setMessage(MessageType.ERROR, "Both fields are required");
 			return;
 		}
+		// check secretKeyField & accessKeyField
 	}
 
 	private void clearMessage(){
 		messageText.setText("");
 	}
+	// clear message text
 
 	private void setMessage(MessageType type, String message){
 		Platform.runLater(()->{
@@ -93,4 +103,6 @@ public class LoginController implements Initializable{
 			messageText.setText(message);
 		});
 	}
+	// set message text
 }
+// controller for login.fxml
