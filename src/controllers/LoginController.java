@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -12,6 +13,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import utilities.Common;
 import utilities.Common.MessageType;
 
 public class LoginController implements Initializable{
@@ -23,6 +26,9 @@ public class LoginController implements Initializable{
 
 	public LoginController(){
 		fileChooser= new FileChooser();
+		fileChooser.getExtensionFilters().add(
+			new ExtensionFilter("*.txt, *.conf, *.config, *.property, *.properties",
+				"*.txt", "*.conf", "*.config", "*.properties", "*.property"));
 	}
 
 	@Override
@@ -49,6 +55,21 @@ public class LoginController implements Initializable{
 			setMessage(MessageType.WARN, "No file selected");
 			return;
 		}
+
+		try{
+			Common.instance().setPropertFile(keyFile.getPath());
+
+			String accessKey= Common.instance().getProperty("accessKey");
+			String secretKey= Common.instance().getProperty("secretKey");
+
+			if(accessKey== null || secretKey== null){
+				setMessage(MessageType.ERROR, "Required both accessKey & secretKey values");
+				return;
+			}
+
+			accessKeyField.setText(accessKey);
+			secretKeyField.setText(secretKey);
+		}catch(IOException ioe){}
 
 		processLogin(event);
 	}

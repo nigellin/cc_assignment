@@ -42,7 +42,10 @@
         </GridPane>
         <FlowPane alignment="CENTER_RIGHT" hgap="20.0" maxWidth="400.0" prefHeight="30.0" prefWidth="-1.0" vgap="0.0">
           <children>
-            <Text id="message" fx:id="messageText" strokeType="OUTSIDE" strokeWidth="0.0" text="[MESSAGE]">
+            <Text id="message" fx:id="messageText" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+              <font>
+                <Font name="System Bold" size="13.0" />
+              </font>
               <FlowPane.margin>
                 <Insets />
               </FlowPane.margin>

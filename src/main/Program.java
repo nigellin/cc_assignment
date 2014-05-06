@@ -32,7 +32,7 @@ public class Program extends Application{
 		primaryStage.setScene(scenes.get(Views.Login));
 		primaryStage.setResizable(false);
 		primaryStage.show();
-
+		
 		primaryStage.setOnCloseRequest(event->{ System.exit(0); });
 	}
 
