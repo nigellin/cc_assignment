@@ -2,7 +2,8 @@ cc_assignment
 =============
 
 Team members:<br/>
-	Dominic Jones,	s3331816<br/>
-	Ka Chan,		s3370637<br/>
-	Nanxing Lin,	s3287015<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; s3287015, Nanxing Lin;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; s3331816, Dominic Jones;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; s3370637, Ka Chan;<br/>
+
 
