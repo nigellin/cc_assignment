@@ -33,11 +33,6 @@ public class Common{
 		return properties.getProperty(key);
 	}// get property values
 
-	public enum Views{
-		Login;
-		public String getFxmlPath(){ return "/views/"+ name()+ ".fxml"; }
-	}// existed views
-
 	public enum MessageType{
 		INFO(Color.CORNFLOWERBLUE),
 		ERROR(Color.RED),
