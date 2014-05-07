@@ -27,7 +27,7 @@ public class LoginController implements Initializable{
 	public LoginController(){
 		fileChooser= new FileChooser();
 		fileChooser.getExtensionFilters().add(
-			new ExtensionFilter("*.txt, *.conf, *.config, *.property, *.properties",
+			new ExtensionFilter("*.txt,  *.conf[ig],  *.propert[y|ies]",
 				"*.txt", "*.conf", "*.config", "*.properties", "*.property"));
 		// initialize fileChooser & set allowed file extensions
 	}
@@ -38,13 +38,13 @@ public class LoginController implements Initializable{
 	public void actionKeyPressed(KeyEvent event){
 		clearMessage();
 		// clear all message text;
-		
+
 		switch(event.getCode()){
 			case ENTER:
 				processLogin(null);
 				break;
 				// invoke login if enter key is pressed
-				
+
 			case ESCAPE:
 				TextField temp= ((TextField) event.getSource());
 				temp.setText("");
@@ -68,7 +68,7 @@ public class LoginController implements Initializable{
 			String accessKey= Common.instance().getProperty("accessKey");
 			String secretKey= Common.instance().getProperty("secretKey");
 			// get property values
-			
+
 			if(accessKey== null || secretKey== null){
 				setMessage(MessageType.ERROR, "Required both accessKey & secretKey values");
 				return;
