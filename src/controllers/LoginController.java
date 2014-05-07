@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -33,7 +34,10 @@ public class LoginController implements Initializable{
 	}
 
 	@Override
-	public void initialize(URL url, ResourceBundle rb){}
+	public void initialize(URL url, ResourceBundle rb){
+		accessKeyField.setFont(new Font(14));
+		secretKeyField.setFont(new Font(14));
+	}
 
 	public void actionKeyPressed(KeyEvent event){
 		clearMessage();
@@ -70,7 +74,7 @@ public class LoginController implements Initializable{
 			// get property values
 
 			if(accessKey== null || secretKey== null){
-				setMessage(MessageType.ERROR, "Required both accessKey & secretKey values");
+				setMessage(MessageType.ERROR, "Required 'accessKey' & 'secretKey'");
 				return;
 			}// check property values of selected file
 
