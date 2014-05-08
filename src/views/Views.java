@@ -9,6 +9,14 @@ import javafx.scene.Scene;
 public class Views{
 	private final HashMap<ViewType, FXMLLoader>	loaders;
 	private final HashMap<ViewType, Scene>		scenes;
+	private static Views instance;
+
+	public static Views instance(){
+		if(instance== null)
+			instance= new Views();
+
+		return instance;
+	}
 
 	public Views(){
 		loaders	= new HashMap<>();
@@ -19,7 +27,7 @@ public class Views{
 			try{
 				loaders.put(type, new FXMLLoader(getClass().getResource(type.getFxmlPath())));
 				scenes.put(type, new Scene(loaders.get(type).load()));
-			}catch(IOException ex){}
+			}catch(IOException ex){ ex.printStackTrace(); }
 		});
 		// add values into loaders & scenes
 	}
@@ -37,7 +45,7 @@ public class Views{
 	}// get controller
 
 	public enum ViewType{
-		Login;
+		Authentication;
 		public String getFxmlPath(){ return "/views/"+ name()+ ".fxml"; }
 	}// enum for existed fxml file name
 }

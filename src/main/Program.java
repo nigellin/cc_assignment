@@ -8,13 +8,12 @@ public class Program extends Application{
 	public Views views;
 
 	public Program(){
-		views= new Views();
+		views= Views.instance();
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception{
-		primaryStage.setScene(views.getScene(Views.ViewType.Login));
-
+		primaryStage.setScene(views.getScene(Views.ViewType.Authentication));
 		primaryStage.setResizable(false);
 		primaryStage.show();
 

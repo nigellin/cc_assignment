@@ -1,5 +1,6 @@
 package utilities;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +22,15 @@ public class Common{
 		return instance;
 	} // singleton method
 
-	public void setPropertFile(String filePath) throws IOException{
-		try(InputStream input= new FileInputStream(filePath)){
+	public void setPropertyFile(String filepath) throws IOException{
+		this.setPropertFile(new File(filepath));
+	}
+
+	public void setPropertFile(File file) throws IOException{
+		if(!file.isFile())
+			throw new IOException("Invalid file");
+
+		try(InputStream input= new FileInputStream(file)){
 			properties.load(input);
 		}catch(IOException ioe){
 			throw new IOException(ioe.getMessage());
