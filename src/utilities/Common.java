@@ -50,5 +50,16 @@ public class Common{
 		private final Color color;
 		private MessageType(Color c){ color= c; }
 		public final Color getColor(){ return color; }
-	}// enum for message type, color value was associated
+	}// enum for message type, color value was Associated
+
+	public enum SceneType{
+		Authentication("Authentication - import key property file");
+
+		private final String title;
+		private SceneType(String t){ title= t; }
+		public String getTitle(){ return title; }
+		public String getFxmlPath(){ return "/views/"+ name()+ ".fxml"; }
+	}// enum for existed fxml file name
+
+	public static final String[] FILE_CONFIG_EXTENSIONS= {	"*.txt", "*.conf", "*.config", "*.properties", "*.property"};
 }

@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.stream.Stream;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import utilities.Common.SceneType;
 
 public class Views{
-	private final HashMap<ViewType, FXMLLoader>	loaders;
-	private final HashMap<ViewType, Scene>		scenes;
+	private final HashMap<SceneType, FXMLLoader>	loaders;
+	private final HashMap<SceneType, Scene>		scenes;
 	private static Views instance;
 
 	public static Views instance(){
@@ -23,7 +24,7 @@ public class Views{
 		scenes	= new HashMap<>();
 		// initialize hashmap
 
-		Stream.of(ViewType.values()).forEach(type-> {
+		Stream.of(SceneType.values()).forEach(type-> {
 			try{
 				loaders.put(type, new FXMLLoader(getClass().getResource(type.getFxmlPath())));
 				scenes.put(type, new Scene(loaders.get(type).load()));
@@ -32,20 +33,17 @@ public class Views{
 		// add values into loaders & scenes
 	}
 
-	public Scene getScene(ViewType type){
+	public Scene getScene(SceneType type){
 		return scenes.get(type);
 	}// get scene from hashmap
 
-	public FXMLLoader getFXMLLoader(ViewType type){
+	public FXMLLoader getFXMLLoader(SceneType type){
 		return loaders.get(type);
 	}// get fxmlloader from hashmap
 
-	public Object getController(ViewType type){
+	public Object getController(SceneType type){
 		return loaders.get(type).getController();
 	}// get controller
 
-	public enum ViewType{
-		Authentication;
-		public String getFxmlPath(){ return "/views/"+ name()+ ".fxml"; }
-	}// enum for existed fxml file name
+	
 }

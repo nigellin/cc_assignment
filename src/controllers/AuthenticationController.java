@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
+import java.util.stream.Stream;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import main.Client;
+import utilities.Common;
 import utilities.Common.MessageType;
 
 public class AuthenticationController implements Initializable{
@@ -29,8 +30,7 @@ public class AuthenticationController implements Initializable{
 		fileChooser	= new FileChooser();
 
 		fileChooser.getExtensionFilters().add(
-			new ExtensionFilter("*.txt,  *.conf[ig],  *.propert[y|ies]",
-				"*.txt", "*.conf", "*.config", "*.properties", "*.property"));
+			new ExtensionFilter("*.txt | *.conf | *.config | *.property | *.properties", Common.FILE_CONFIG_EXTENSIONS));
 		// initialize fileChooser & set allowed file extensions
 	}
 
@@ -64,7 +64,23 @@ public class AuthenticationController implements Initializable{
 		clearText();
 		Dragboard dragboard= event.getDragboard();
 
-		if(dragboard.hasFiles())
+		boolean isSuccess= false;
+
+		if(dragboard.hasFiles()){
+			if(dragboard.getFiles().size()!= 1)
+				setMessageText(MessageType.WARN, "Required one file only");
+			else{
+				File file= dragboard.getFiles().get(0);
+
+				if(Stream.of(Common.FILE_CONFIG_EXTENSIONS).anyMatch(
+					ext-> file.getName().toLowerCase().endsWith(ext.substring(1))))
+					isSuccess= true;
+				else
+					setMessageText(MessageType.ERROR, "Only require { *.txt | *.conf | *.config | *.property | *.properties }");
+			}
+		}
+
+		if(isSuccess)
 			event.acceptTransferModes(TransferMode.COPY);
 		else
 			event.consume();
