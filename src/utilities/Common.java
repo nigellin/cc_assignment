@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Common{
@@ -42,24 +43,29 @@ public class Common{
 	}// get property values
 
 	public enum MessageType{
-		INFO(Color.CORNFLOWERBLUE),
-		ERROR(Color.RED),
-		WARN(Color.DARKORANGE),
-		NULL(Color.BLACK);
+		INFO(Color.CORNFLOWERBLUE, "messages"),
+		ERROR(Color.RED, "close"),
+		WARNING(Color.DARKORANGE, "warning"),
+		NULL(Color.BLACK, "bubble");
 
+		private final String iconName;
 		private final Color color;
-		private MessageType(Color c){ color= c; }
+		private MessageType(Color c, String i){
+			color	= c;
+			iconName= i;
+		}
 		public final Color getColor(){ return color; }
-	}// enum for message type, color value was Associated
-
+		public final Image getIconImage(){ return new Image("views/icons/"+ iconName+ ".png"); }
+	}
 	public enum SceneType{
-		Authentication("Authentication - import key property file");
+		Authentication("Authentication - import key property file"),
+		Dialog("Message Dialog");
 
 		private final String title;
 		private SceneType(String t){ title= t; }
 		public String getTitle(){ return title; }
 		public String getFxmlPath(){ return "/views/"+ name()+ ".fxml"; }
-	}// enum for existed fxml file name
+	}
 
-	public static final String[] FILE_CONFIG_EXTENSIONS= {	"*.txt", "*.conf", "*.config", "*.properties", "*.property"};
+	public static final String[] FILE_EXTENSIONS= {	"*.txt", "*.conf", "*.config", "*.properties", "*.property"};
 }

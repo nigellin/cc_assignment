@@ -9,7 +9,7 @@ import utilities.Common.SceneType;
 
 public class Views{
 	private final HashMap<SceneType, FXMLLoader>	loaders;
-	private final HashMap<SceneType, Scene>		scenes;
+	private final HashMap<SceneType, Scene>			scenes;
 	private static Views instance;
 
 	public static Views instance(){
@@ -45,5 +45,5 @@ public class Views{
 		return loaders.get(type).getController();
 	}// get controller
 
-	
+
 }

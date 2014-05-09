@@ -30,7 +30,7 @@ public class AuthenticationController implements Initializable{
 		fileChooser	= new FileChooser();
 
 		fileChooser.getExtensionFilters().add(
-			new ExtensionFilter("*.txt | *.conf | *.config | *.property | *.properties", Common.FILE_CONFIG_EXTENSIONS));
+			new ExtensionFilter("*.txt | *.conf | *.config | *.property | *.properties", Common.FILE_EXTENSIONS));
 		// initialize fileChooser & set allowed file extensions
 	}
 
@@ -57,7 +57,7 @@ public class AuthenticationController implements Initializable{
 		if(file!= null)
 			processAuthenticate(file);
 		else
-			setMessageText(MessageType.WARN, "No file selected");
+			setMessageText(MessageType.WARNING, "No file selected");
 	}
 
 	public void actionDragOver(DragEvent event){
@@ -68,11 +68,11 @@ public class AuthenticationController implements Initializable{
 
 		if(dragboard.hasFiles()){
 			if(dragboard.getFiles().size()!= 1)
-				setMessageText(MessageType.WARN, "Required one file only");
+				setMessageText(MessageType.WARNING, "Required one file only");
 			else{
 				File file= dragboard.getFiles().get(0);
 
-				if(Stream.of(Common.FILE_CONFIG_EXTENSIONS).anyMatch(
+				if(Stream.of(Common.FILE_EXTENSIONS).anyMatch(
 					ext-> file.getName().toLowerCase().endsWith(ext.substring(1))))
 					isSuccess= true;
 				else
