@@ -2,8 +2,8 @@ package main;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import utilities.Common.SceneType;
-import views.Views;
+import utilities.Common.*;
+import views.*;
 
 public class Program extends Application{
 	public Views views;

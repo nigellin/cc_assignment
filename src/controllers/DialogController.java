@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -14,6 +15,7 @@ import utilities.Common.MessageType;
 public class DialogController implements Initializable{
 	@FXML private ImageView icon;
 	@FXML private Text		messageText;
+	@FXML private Button	cancelButton;
 	private int result;
 
 	@Override
@@ -43,5 +45,9 @@ public class DialogController implements Initializable{
 
 	public void close(){
 		((Stage)messageText.getScene().getWindow()).close();
+	}
+
+	public void requireCancelButton(boolean isRequire){
+		cancelButton.setVisible(isRequire);
 	}
 }
