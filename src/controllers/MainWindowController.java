@@ -70,11 +70,11 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionRefreshList(ActionEvent event){
-		
+
 	}
 
 	public void actionShowAbout(ActionEvent event){
-		new DialogWindow((Stage)stackPane.getScene().getWindow()).showDialog("Version 0.1 ALPHA", false);
+		new DialogWindow().showDialog("version 0.1 alpha", false);
 	}
 
 	public void actionDragOver(DragEvent event){

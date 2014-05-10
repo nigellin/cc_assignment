@@ -14,8 +14,9 @@ public class Program extends Application{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception{
-		primaryStage.setScene(views.getScene(SceneType.MainWindow));
-		primaryStage.setTitle(SceneType.MainWindow.getTitle());
+		views.setPrimaryStage(primaryStage);
+		primaryStage.setScene(views.getScene(SceneType.Authentication));
+		primaryStage.setTitle(SceneType.Authentication.getTitle());
 
 		primaryStage.setResizable(false);
 		primaryStage.show();

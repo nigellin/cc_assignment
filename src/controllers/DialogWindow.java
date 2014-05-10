@@ -7,10 +7,10 @@ import utilities.Common.MessageType;
 import views.Views;
 
 public class DialogWindow extends Stage{
-	public DialogWindow(Stage owner){
+	public DialogWindow(){
 		super();
 
-		initOwner(owner);
+		initOwner(Views.instance().getPrimaryStage());
 		initModality(Modality.APPLICATION_MODAL);
 	}
 

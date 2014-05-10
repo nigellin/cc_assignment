@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.stream.Stream;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.Stage;
 import utilities.Common.SceneType;
 
 public class Views{
 	private final HashMap<SceneType, FXMLLoader>	loaders;
 	private final HashMap<SceneType, Scene>			scenes;
+	private Stage primaryStage;
 	private static Views instance;
 
 	public static Views instance(){
@@ -32,6 +34,13 @@ public class Views{
 		});
 		// add values into loaders & scenes
 	}
+
+	public void switchScene(SceneType type){
+		primaryStage.setScene(scenes.get(type));
+	}
+
+	public Stage getPrimaryStage(){ return primaryStage; }
+	public void setPrimaryStage(Stage stage){ primaryStage= stage; }
 
 	public Scene getScene(SceneType type){
 		return scenes.get(type);

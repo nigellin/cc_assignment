@@ -18,6 +18,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import main.Client;
 import utilities.Common;
 import utilities.Common.MessageType;
+import views.Views;
 
 public class AuthenticationController implements Initializable{
 	@FXML private Text			messageText;
@@ -44,6 +45,7 @@ public class AuthenticationController implements Initializable{
 
 		try{
 			client.setS3Client(file);
+			Views.instance().switchScene(Common.SceneType.MainWindow);
 		}catch(Exception e){
 			setMessageText(MessageType.ERROR, e instanceof AmazonS3Exception?
 				((AmazonS3Exception)e).getErrorMessage(): e.getMessage());

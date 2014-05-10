@@ -9,8 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Common{
-	private static Common	instance;
-	private Properties		properties;
+	private static	Common		instance;
+	private final	Properties	properties;
 
 	public Common(){
 		properties= new Properties();
@@ -47,7 +47,7 @@ public class Common{
 	}
 
 	public enum MessageType{
-		INFO(Color.CORNFLOWERBLUE, "messages"),
+		INFO(Color.CORNFLOWERBLUE, "info"),
 		ERROR(Color.RED, "close"),
 		WARNING(Color.DARKORANGE, "warning"),
 		NULL(Color.BLACK, "bubble");
