@@ -53,6 +53,4 @@ public class Views{
 	public Object getController(SceneType type){
 		return loaders.get(type).getController();
 	}// get controller
-
-
 }

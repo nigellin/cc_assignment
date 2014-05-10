@@ -1,6 +1,7 @@
 package controllers;
 
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -16,7 +17,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 public class MainWindowController implements Initializable{
 	@FXML private StackPane stackPane;
@@ -24,10 +24,11 @@ public class MainWindowController implements Initializable{
 	@FXML private Button	uploadButton,	downloadButton, deleteButton;
 	@FXML private VBox		bottomPane;
 	@FXML private TableView tableView;
-	@FXML private TableColumn<S3Object, String> nameCol, sizeCol, typeCol, dateModifiedCol, dateExpiresCol, md5Col, etagCol;
+	@FXML private TableColumn<S3Object, String> nameCol, sizeCol, typeCol,
+		ownerCol, dateModifiedCol, etagCol;
 
-	private final ObservableList<S3Object>	data;
-	private final FileChooser				fileChooser;
+	private final ObservableList<S3ObjectSummary> data;
+	private final FileChooser fileChooser;
 
 	public MainWindowController(){
 		data		= FXCollections.observableArrayList();

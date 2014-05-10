@@ -5,9 +5,12 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class Client{
 	private static Client	instance;
@@ -30,6 +33,14 @@ public class Client{
 		transferManager= new TransferManager(s3Client);
 
 		s3Client.setRegion(Region.getRegion(Regions.DEFAULT_REGION));
+	}
+
+	public List<Bucket> getBuckets(){
+		return s3Client.listBuckets();
+	}
+
+	public List<S3Object> getS3Object(String bucketName){
+		return null;
 	}
 
 	public String getName(){

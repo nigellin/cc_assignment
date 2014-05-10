@@ -25,9 +25,8 @@
             <TableColumn editable="false" maxWidth="500.0" minWidth="100.0" prefWidth="150.0" text="Name" fx:id="nameCol" />
             <TableColumn maxWidth="200.0" minWidth="100.0" prefWidth="120.0" text="Size" fx:id="sizeCol" />
             <TableColumn maxWidth="200.0" minWidth="100.0" prefWidth="120.0" text="Content Type" fx:id="typeCol" />
+            <TableColumn editable="false" maxWidth="500.0" minWidth="100.0" prefWidth="150.0" text="Owner" fx:id="ownerCol" />
             <TableColumn maxWidth="250.0" minWidth="100.0" prefWidth="150.0" text="Date Modified" fx:id="dateModifiedCol" />
-            <TableColumn maxWidth="250.0" minWidth="100.0" prefWidth="150.0" text="Date Http Expires" fx:id="dateExpiresCol" />
-            <TableColumn maxWidth="600.0" minWidth="150.0" prefWidth="250.0" text="MD5" fx:id="md5Col" />
             <TableColumn maxWidth="600.0" minWidth="150.0" prefWidth="250.0" text="ETag" fx:id="etagCol" />
           </columns>
         </TableView>

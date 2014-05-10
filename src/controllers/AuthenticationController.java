@@ -45,6 +45,7 @@ public class AuthenticationController implements Initializable{
 
 		try{
 			client.setS3Client(file);
+			
 			Views.instance().switchScene(Common.SceneType.MainWindow);
 		}catch(Exception e){
 			setMessageText(MessageType.ERROR, e instanceof AmazonS3Exception?
