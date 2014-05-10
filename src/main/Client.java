@@ -27,6 +27,7 @@ public class Client{
 	public void setS3Client(File file) throws AmazonS3Exception, IOException{
 		s3Client= new AmazonS3Client(new PropertiesCredentials(file));
 		name	= s3Client.getS3AccountOwner().getDisplayName();
+		transferManager= new TransferManager(s3Client);
 
 		s3Client.setRegion(Region.getRegion(Regions.DEFAULT_REGION));
 	}
