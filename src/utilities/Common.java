@@ -59,7 +59,8 @@ public class Common{
 	}
 	public enum SceneType{
 		Authentication("Authentication - import key property file"),
-		Dialog("Message Dialog");
+		Dialog("Message Dialog"),
+		MainWindow("Main Window");
 
 		private final String title;
 		private SceneType(String t){ title= t; }

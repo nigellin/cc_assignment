@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="controllers.MainWindowController">
+  <bottom>
+    <VBox fx:id="bottomPane" alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" />
+  </bottom>
+  <center>
+    <StackPane fx:id="stackPane" minHeight="400.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" visible="true">
+      <children>
+        <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" />
+      </children>
+    </StackPane>
+  </center>
+  <top>
+    <VBox prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
+      <children>
+        <MenuBar>
+          <menus>
+            <Menu mnemonicParsing="false" style="" text="File">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Close" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Delete" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+              <items>
+                <MenuItem mnemonicParsing="false" text="About" />
+              </items>
+            </Menu>
+          </menus>
+        </MenuBar>
+        <FlowPane hgap="10.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: lightgray;">
+          <children>
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#actionGoBack" text="">
+              <graphic>
+                <ImageView fitHeight="16.0" fitWidth="16.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                    <Image url="@icons/arrow-back.png" />
+                  </image>
+                </ImageView>
+              </graphic>
+              <tooltip>
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Go Back" />
+              </tooltip>
+            </Button>
+            <Button fx:id="parentButton" mnemonicParsing="false" text="">
+              <graphic>
+                <ImageView fitHeight="16.0" fitWidth="16.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                    <Image url="@icons/arrow-up.png" />
+                  </image>
+                </ImageView>
+              </graphic>
+              <tooltip>
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="To Parent Directory" />
+              </tooltip>
+            </Button>
+            <Button id="f" fx:id="forwardButton" mnemonicParsing="false" onAction="#actionGoForward" text="">
+              <graphic>
+                <ImageView fitHeight="16.0" fitWidth="16.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                    <Image url="@icons/arrow-forward.png" />
+                  </image>
+                </ImageView>
+              </graphic>
+              <tooltip>
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Go Forward" />
+              </tooltip>
+            </Button>
+          </children>
+          <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+          </padding>
+          <VBox.margin>
+            <Insets />
+          </VBox.margin>
+        </FlowPane>
+      </children>
+    </VBox>
+  </top>
+</BorderPane>

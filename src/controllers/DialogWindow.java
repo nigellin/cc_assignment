@@ -26,6 +26,7 @@ public class DialogWindow extends Stage{
 		DialogController controller= (DialogController)Views.instance().getController(Common.SceneType.Dialog);
 		controller.setMessage(type, message);
 		controller.requireCancelButton(showCancel);
+
 		setScene(Views.instance().getScene(Common.SceneType.Dialog));
 		setTitle(title);
 		showAndWait();
