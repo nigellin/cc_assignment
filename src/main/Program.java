@@ -1,6 +1,5 @@
 package main;
 
-import controllers.DialogWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import utilities.Common.*;
@@ -20,7 +19,7 @@ public class Program extends Application{
 
 		primaryStage.setResizable(false);
 		primaryStage.show();
-		
+
 		primaryStage.setOnCloseRequest(event->{ System.exit(0); });
 	}
 

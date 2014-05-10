@@ -42,6 +42,10 @@ public class Common{
 		return properties.getProperty(key);
 	}// get property values
 
+	public enum FileActions{
+		DELETE, CREATE, DOWNLOAD, MODIFY;
+	}
+
 	public enum MessageType{
 		INFO(Color.CORNFLOWERBLUE, "messages"),
 		ERROR(Color.RED, "close"),
@@ -57,6 +61,7 @@ public class Common{
 		public final Color getColor(){ return color; }
 		public final Image getIconImage(){ return new Image("views/icons/"+ iconName+ ".png"); }
 	}
+
 	public enum SceneType{
 		Authentication("Authentication - import key property file"),
 		Dialog("Message Dialog"),
