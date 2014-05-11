@@ -20,7 +20,7 @@
   <center>
     <StackPane fx:id="stackPane" minHeight="400.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" visible="true">
       <children>
-        <TableView id="tableView" fx:id="objectTableView" onKeyPressed="#processSelected" onMouseClicked="#processSelected" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true">
+        <TableView id="tableView" fx:id="objectTableView" onKeyPressed="#processSelectedItems" onMouseClicked="#processSelectedItems" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true">
           <columns>
             <TableColumn editable="false" maxWidth="600.0" minWidth="100.0" prefWidth="150.0" text="Name" fx:id="oNameCol" />
             <TableColumn maxWidth="150.0" minWidth="80.0" prefWidth="100.0" text="Size" fx:id="oSizeCol" />
@@ -30,7 +30,7 @@
             <TableColumn maxWidth="300.0" minWidth="150.0" prefWidth="250.0" text="ETag" fx:id="oEtagCol" />
           </columns>
         </TableView>
-        <TableView id="tableView" fx:id="bucketTableView" onKeyPressed="#processSelected" onMouseClicked="#processSelected" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true">
+        <TableView id="tableView" fx:id="bucketTableView" onKeyPressed="#processSelectedItems" onMouseClicked="#processSelectedItems" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true">
           <columns>
             <TableColumn editable="false" maxWidth="600.0" minWidth="100.0" prefWidth="150.0" text="Name" fx:id="bNameCol" />
             <TableColumn maxWidth="180.0" minWidth="100.0" prefWidth="120.0" text="Content Type" fx:id="bTypeCol" />

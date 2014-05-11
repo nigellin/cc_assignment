@@ -65,7 +65,7 @@ public class MainWindowController implements Initializable{
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	}
 
-	public void processSelected(Event event){
+	public void processSelectedItems(Event event){
 		boolean isSuccess= false;
 
 		TableView temp= isBucketViewFront? bucketTableView: objectTableView;
