@@ -38,7 +38,7 @@
             </Button>
           </children>
         </FlowPane>
-        <Text fx:id="messageText" font="$x2" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+        <Text fx:id="messageText" font="$x2" strokeType="OUTSIDE" strokeWidth="0.0" text="" textAlignment="CENTER" wrappingWidth="450.0" />
       </children>
     </VBox>
   </children>

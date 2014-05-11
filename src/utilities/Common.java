@@ -42,6 +42,31 @@ public class Common{
 		return properties.getProperty(key);
 	}// get property values
 
+	public static String toSizeString(double size){
+		String suffix= "bytes";
+
+		if(size>= 1024){
+			size/= 1024;
+			suffix= "KB";
+		}else if(size>= 1000* 1000){
+			size/= 1024* 1024;
+			suffix= "MB";
+		}else if(size>= Math.pow(1000, 3)){
+			size/= Math.pow(1024, 3);
+			suffix= "GB";
+		}else if(size>= Math.pow(1000, 4)){
+			size/= Math.pow(1024, 4);
+			suffix= "TB";
+		}
+
+		String sizeString= String.format("%.2f", size);
+
+		if(sizeString.endsWith(".00"))
+			sizeString= sizeString.substring(1, sizeString.lastIndexOf(".00"));
+
+		return sizeString.concat(" "+ suffix);
+	}
+
 	public enum FileActions{
 		DELETE, CREATE, DOWNLOAD, MODIFY;
 	}

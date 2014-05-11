@@ -6,7 +6,9 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import java.io.File;
 import java.io.IOException;
@@ -31,16 +33,23 @@ public class Client{
 		s3Client= new AmazonS3Client(new PropertiesCredentials(file));
 		name	= s3Client.getS3AccountOwner().getDisplayName();
 		transferManager= new TransferManager(s3Client);
-
-		s3Client.setRegion(Region.getRegion(Regions.DEFAULT_REGION));
+		s3Client.setRegion(Region.getRegion(Regions.US_EAST_1));
 	}
 
 	public List<Bucket> getBuckets(){
 		return s3Client.listBuckets();
 	}
 
-	public List<S3Object> getS3Object(String bucketName){
-		return null;
+	public List<S3ObjectSummary> getObjectSummaries(String bucketName){
+		return s3Client.listObjects(bucketName).getObjectSummaries();
+	}
+
+	public ObjectMetadata getObjectMetadata(String bucketName, String key){
+		return s3Client.getObjectMetadata(bucketName, key);
+	}
+
+	public S3Object getObject(String bucketName, String key){
+		return s3Client.getObject(bucketName, key);
 	}
 
 	public String getName(){
