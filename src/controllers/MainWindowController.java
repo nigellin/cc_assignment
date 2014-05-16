@@ -1,10 +1,16 @@
 package controllers;
 
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,7 +20,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -25,6 +33,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import main.Client;
 import utilities.Common;
+
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 public class MainWindowController implements Initializable{
 	@FXML private StackPane stackPane;
@@ -45,6 +62,10 @@ public class MainWindowController implements Initializable{
 
 	private String	bucketName;
 	private boolean isBucketViewFront;
+	private Object selectedFile;
+	static AmazonS3       s3;
+
+
 
 	public MainWindowController(){
 		objectList	= FXCollections.observableArrayList();
@@ -52,6 +73,18 @@ public class MainWindowController implements Initializable{
 		client		= Client.instance();
 		fileChooser	= new FileChooser();
 		bucketName	= "";
+		
+		AWSCredentials credentials = null;
+        try {
+            credentials = new ProfileCredentialsProvider().getCredentials();
+        } catch (Exception e) {
+            throw new AmazonClientException(
+                    "Cannot load the credentials from the credential profiles file. " +
+                    "Please make sure that your credentials file is at the correct " +
+                    "location (~/.aws/credentials), and is in valid format.",
+                    e);
+        }
+    s3  = new AmazonS3Client(credentials);
 	}
 
 	@Override
@@ -63,6 +96,25 @@ public class MainWindowController implements Initializable{
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 		objectTableView.setItems(objectList);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		
+	    objectTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+	        @Override
+	        public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+	            //Check whether item is selected and set value of selected item to Label
+	            if(objectTableView.getSelectionModel().getSelectedItem() != null) 
+	            {    
+	               TableViewSelectionModel selectionModel = objectTableView.getSelectionModel();
+	               ObservableList selectedCells = selectionModel.getSelectedCells();
+	               TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+
+	               
+	               selectedFile = objectTableView.getItems().get(objectTableView.getSelectionModel().getSelectedIndex());
+//	               System.out.println("Selected Value" + ((S3ObjectSummary) hi).getKey());
+	               
+	               
+	             }
+	             }
+	         });
 	}
 
 	public void processSelectedItems(Event event){
@@ -101,19 +153,57 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionToParentDirectory(ActionEvent event){
-
+		
 	}
 
 	public void actionDeleteFiles(ActionEvent event){
-
+		
+		s3.deleteObject(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
+		
+		updateObjectList();
+		
 	}
 
 	public void actionDownloadFiles(ActionEvent event){
+		FileChooser fileChooser = new FileChooser();
+		  
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All Files (*.*)", "*.*");
+        fileChooser.getExtensionFilters().add(extFilter);
+        
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(null);
+        
+        if(file != null){
+        	File localFile = new File(String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
+        	
+        	s3.getObject(
+    		        new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())), localFile
+    		        );
+            
+        }
+//    	s3.getObject(
+//		        new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())),
+//		        new File("~/Downloads" + String.valueOf(((S3ObjectSummary) selectedFile).getKey()))		        
+//		        );
 
 	}
+	
+
 
 	public void actionUploadFiles(ActionEvent event){
-
+		File file;
+		FileChooser fileChooser = new FileChooser();
+		 
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All Files (*.*)", "*.*");
+        fileChooser.getExtensionFilters().add(extFilter);
+       
+        file = fileChooser.showOpenDialog(null);
+        
+        s3.putObject(String.valueOf(bucketName), file.getName(), file);
+        
+        updateObjectList();
+       
 	}
 
 	public void actionOpenSettings(ActionEvent event){
@@ -121,11 +211,11 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionRefreshList(ActionEvent event){
-
+		updateObjectList();
 	}
 
 	public void actionShowAbout(ActionEvent event){
-		new DialogWindow().showDialog("version 0.1 alpha", false);
+		new DialogWindow().showDialog("version 0.2 alpha", false);
 	}
 
 	public void actionDragOver(DragEvent event){
