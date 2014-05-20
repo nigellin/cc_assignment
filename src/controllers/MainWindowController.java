@@ -60,10 +60,10 @@ public class MainWindowController implements Initializable{
 	private final FileChooser	fileChooser;
 	private final Client		client;
 
+
 	private String	bucketName;
 	private boolean isBucketViewFront;
 	private Object selectedFile;
-	static AmazonS3       s3;
 
 
 
@@ -74,17 +74,7 @@ public class MainWindowController implements Initializable{
 		fileChooser	= new FileChooser();
 		bucketName	= "";
 		
-		AWSCredentials credentials = null;
-        try {
-            credentials = new ProfileCredentialsProvider().getCredentials();
-        } catch (Exception e) {
-            throw new AmazonClientException(
-                    "Cannot load the credentials from the credential profiles file. " +
-                    "Please make sure that your credentials file is at the correct " +
-                    "location (~/.aws/credentials), and is in valid format.",
-                    e);
-        }
-    s3  = new AmazonS3Client(credentials);
+
 	}
 
 	@Override
@@ -120,7 +110,7 @@ public class MainWindowController implements Initializable{
 	public void processSelectedItems(Event event){
 		boolean isSuccess= false;
 
-		TableView temp= isBucketViewFront? bucketTableView: objectTableView;
+		TableView temp= isBucketViewFront ? bucketTableView : objectTableView;
 
 		if(temp.getSelectionModel().isEmpty())
 			return;
@@ -153,12 +143,15 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionToParentDirectory(ActionEvent event){
-		
+	
+			switchToBuckets(true);
+			updateBucketList();
+
 	}
 
 	public void actionDeleteFiles(ActionEvent event){
 		
-		s3.deleteObject(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
+		Client.getS3Client().deleteObject(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
 		
 		updateObjectList();
 		
@@ -167,25 +160,30 @@ public class MainWindowController implements Initializable{
 	public void actionDownloadFiles(ActionEvent event){
 		FileChooser fileChooser = new FileChooser();
 		  
-        //Set extension filter
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All Files (*.*)", "*.*");
         fileChooser.getExtensionFilters().add(extFilter);
         
-        //Show save file dialog
         File file = fileChooser.showSaveDialog(null);
         
+        fileChooser.setInitialFileName(String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
+        
         if(file != null){
-        	File localFile = new File(String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
         	
-        	s3.getObject(
-    		        new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())), localFile
-    		        );
+        	
+//        	File localFile = new File(String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
+
+        	
+//        	Client.getS3Client().getObject(
+//    		        new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())), localFile
+//    		        );
             
         }
 //    	s3.getObject(
 //		        new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())),
 //		        new File("~/Downloads" + String.valueOf(((S3ObjectSummary) selectedFile).getKey()))		        
 //		        );
+        
+        client.getTransferManager().download(new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())), file);
 
 	}
 	
@@ -200,7 +198,7 @@ public class MainWindowController implements Initializable{
        
         file = fileChooser.showOpenDialog(null);
         
-        s3.putObject(String.valueOf(bucketName), file.getName(), file);
+        Client.getS3Client().putObject(String.valueOf(bucketName), file.getName(), file);
         
         updateObjectList();
        
@@ -227,6 +225,21 @@ public class MainWindowController implements Initializable{
 		Dragboard gragboard= event.getDragboard();
 		boolean isSuccess= false;
 	}
+	
+	public static boolean isFolderOrFile(String key) {
+		int length1 = key.length();
+		int length2 = key.replace("/", "").length();
+		if(length1 - length2 < 2) {
+			return key != null;
+
+		}
+		else{
+			return (key.indexOf("/") == -1);		
+
+		}
+
+		  
+		}
 
 	public void updateBucketList(){
 		bucketList.setAll(client.getBuckets());
@@ -240,7 +253,14 @@ public class MainWindowController implements Initializable{
 		objectList.clear();
 
 		if(!bucketName.isEmpty()){
-			objectList.addAll(client.getObjectSummaries(bucketName));
+			//objectList.addAll(client.getObjectSummaries(bucketName));
+			for(S3ObjectSummary objectSummary : client.getObjectSummaries(bucketName)) {
+				  if(isFolderOrFile(objectSummary.getKey())) {
+					  objectList.add(objectSummary);
+				  }
+				  else{
+				  }
+				}
 			oNameCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getKey()));
 			oTypeCol.setCellValueFactory(data-> new SimpleStringProperty(client.getObjectMetadata(bucketName, data.getValue().getKey()).getContentType()));
 			oSizeCol.setCellValueFactory(data-> new SimpleStringProperty(Common.toSizeString(data.getValue().getSize())));

@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Client{
 	private static Client	instance;
-	private AmazonS3Client	s3Client;
+	public static AmazonS3Client	s3Client;
 	private TransferManager transferManager;
 	private String			name;
 
@@ -27,7 +27,7 @@ public class Client{
 		return instance;
 	}
 
-	public AmazonS3Client getS3Client(){ return s3Client; }
+	public static AmazonS3Client getS3Client(){ return s3Client; }
 
 	public void setS3Client(File file) throws AmazonS3Exception, IOException{
 		s3Client= new AmazonS3Client(new PropertiesCredentials(file));
