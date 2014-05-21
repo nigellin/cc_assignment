@@ -36,7 +36,6 @@ public class MainWindowController implements Initializable{
 	private final ObservableList<S3ObjectSummary>	objectList;
 	private final ObservableList<Bucket>			bucketList;
 	private final FileChooser		fileChooser;
-	private final DirectoryChooser	dirChooser;
 	private final Client			client;
 
 
@@ -48,7 +47,6 @@ public class MainWindowController implements Initializable{
 		bucketList	= FXCollections.observableArrayList();
 		client		= Client.instance();
 		fileChooser	= new FileChooser();
-		dirChooser	= new DirectoryChooser();
 		bucketName	= "";
 		prefix		= "";
 	}
