@@ -20,7 +20,7 @@
   <center>
     <StackPane fx:id="stackPane" minHeight="400.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" visible="true">
       <children>
-        <TableView id="tableView" fx:id="objectTableView" onKeyPressed="#processSelectedItems" onMouseClicked="#processSelectedItems" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true">
+        <TableView id="tableView" fx:id="objectTableView" onDragDetected="#actionDragDetected" onDragDropped="#actionDragDropped" onDragOver="#actionDragOver" onKeyPressed="#processSelectedItems" onMouseClicked="#processSelectedItems" onMouseDragReleased="#actionMouseDragReleased" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true">
           <columns>
             <TableColumn editable="false" maxWidth="600.0" minWidth="100.0" prefWidth="150.0" text="Name" fx:id="oNameCol" />
             <TableColumn maxWidth="150.0" minWidth="80.0" prefWidth="100.0" text="Size" fx:id="oSizeCol" />
@@ -74,7 +74,7 @@
                 </ImageView>
               </graphic>
               <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="Go Back" />
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Go to parent folder" />
               </tooltip>
             </Button>
             <Button id="f" mnemonicParsing="false" onAction="#actionGoInto" text="">
@@ -86,7 +86,7 @@
                 </ImageView>
               </graphic>
               <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="Go Forward" />
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Go into selected folder" />
               </tooltip>
             </Button>
             <Button id="parentButton" fx:id="homeButton" mnemonicParsing="false" onAction="#actionToHome" text="">
@@ -98,7 +98,7 @@
                 </ImageView>
               </graphic>
               <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="To Parent Directory" />
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Jump to bucket view" />
               </tooltip>
             </Button>
             <Separator prefWidth="50.0" visible="false" />
@@ -111,7 +111,7 @@
                 </ImageView>
               </graphic>
               <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="Delete Selected Files" />
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Delete selected items" />
               </tooltip>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="-1.0" visible="false" />
@@ -124,7 +124,7 @@
                 </ImageView>
               </graphic>
               <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="Refresh List" />
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Refresh" />
               </tooltip>
             </Button>
             <Separator prefWidth="50.0" visible="false" />
@@ -137,7 +137,7 @@
                 </ImageView>
               </graphic>
               <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="Upload Files" />
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Upload files" />
               </tooltip>
             </Button>
             <Button id="f" mnemonicParsing="false" onAction="#actionDownloadFiles" text="">
@@ -149,7 +149,7 @@
                 </ImageView>
               </graphic>
               <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="Download Selected File" />
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Download selected files" />
               </tooltip>
             </Button>
           </children>

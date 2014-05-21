@@ -60,6 +60,14 @@ public class MainWindowController implements Initializable{
 		objectTableView.setItems(objectList);
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+		objectTableView.getSelectionModel().selectedItemProperty().addListener((observale, newValue, oldValue)->{
+
+		});
+
+		bucketTableView.getSelectionModel().selectedItemProperty().addListener((observale, newValue, oldValue)->{
+
+		});
 	}
 
 	public void processSelectedItems(Event event){
@@ -173,13 +181,45 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionDragOver(DragEvent event){
-		Dragboard gragboard= event.getDragboard();
+		Dragboard dragboard= event.getDragboard();
 
+		if(dragboard.hasFiles())
+			event.acceptTransferModes(TransferMode.COPY);
+		else
+			event.consume();
 	}
 
 	public void actionDragDropped(DragEvent event){
-		Dragboard gragboard= event.getDragboard();
+		Dragboard dragboard= event.getDragboard();
 		boolean isSuccess= false;
+
+		if(dragboard.hasFiles()){
+			dragboard.getFiles().forEach(file->{
+				client.getTransferManager().upload(bucketName, prefix+ file.getName(), file);
+				updateObjectList();
+			});
+
+			isSuccess= true;
+		}
+
+		event.setDropCompleted(isSuccess);
+		event.consume();
+	}
+
+	public void actionDragDetected(MouseEvent event){
+		Dragboard dragboard= objectTableView.startDragAndDrop(TransferMode.MOVE);
+		
+		event.consume();
+	}
+
+	public void actionMouseDragOver(MouseDragEvent event){
+
+		event.consume();
+	}
+
+	public void actionMouseDragReleased(MouseDragEvent event){
+
+		event.consume();
 	}
 
 	public void updateBucketList(){
@@ -210,6 +250,10 @@ public class MainWindowController implements Initializable{
 		if(toBuckets){
 			bucketTableView.toFront();
 			isBucketViewFront= true;
+
+			bucketName	= "";
+			prefix		= "";
+
 			updateBucketList();
 		}else{
 			bucketTableView.toBack();
