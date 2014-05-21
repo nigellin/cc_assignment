@@ -1,110 +1,67 @@
 package controllers;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
+
 import main.Client;
 import utilities.Common;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import javafx.stage.*;
+import views.*;
 
 public class MainWindowController implements Initializable{
 	@FXML private StackPane stackPane;
-	@FXML private Button	backButton,		forwardButton,	parentButton;
+	@FXML private Button	backButton,		forwardButton,	homeButton;
 	@FXML private Button	uploadButton,	downloadButton, deleteButton;
 	@FXML private VBox		bottomPane;
 
-	@FXML private TableView objectTableView;
-	@FXML private TableView bucketTableView;
+	@FXML private TableView<S3ObjectSummary>	objectTableView;
+	@FXML private TableView<Bucket>				bucketTableView;
 	@FXML private TableColumn<S3ObjectSummary, String> oNameCol, oSizeCol, oTypeCol,
 		oOwnerCol, oDateModifiedCol, oEtagCol;
 	@FXML private TableColumn<Bucket, String> bNameCol, bTypeCol, bOwnerCol, bDateCreatedCol;
 
-	private final ObservableList<S3ObjectSummary> objectList;
-	private final ObservableList<Bucket> bucketList;
-	private final FileChooser	fileChooser;
-	private final Client		client;
+	private final ObservableList<S3ObjectSummary>	objectList;
+	private final ObservableList<Bucket>			bucketList;
+	private final FileChooser		fileChooser;
+	private final DirectoryChooser	dirChooser;
+	private final Client			client;
 
 
-	private String	bucketName;
+	private String	bucketName, prefix;
 	private boolean isBucketViewFront;
-	private Object selectedFile;
-
-
 
 	public MainWindowController(){
 		objectList	= FXCollections.observableArrayList();
 		bucketList	= FXCollections.observableArrayList();
 		client		= Client.instance();
 		fileChooser	= new FileChooser();
+		dirChooser	= new DirectoryChooser();
 		bucketName	= "";
-		
-
+		prefix		= "";
 	}
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb){
-		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		bucketTableView.setItems(bucketList);
+		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 		objectTableView.setItems(objectList);
+		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		
-	    objectTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-	        @Override
-	        public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
-	            //Check whether item is selected and set value of selected item to Label
-	            if(objectTableView.getSelectionModel().getSelectedItem() != null) 
-	            {    
-	               TableViewSelectionModel selectionModel = objectTableView.getSelectionModel();
-	               ObservableList selectedCells = selectionModel.getSelectedCells();
-	               TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-
-	               
-	               selectedFile = objectTableView.getItems().get(objectTableView.getSelectionModel().getSelectedIndex());
-//	               System.out.println("Selected Value" + ((S3ObjectSummary) hi).getKey());
-	               
-	               
-	             }
-	             }
-	         });
 	}
 
 	public void processSelectedItems(Event event){
@@ -124,88 +81,89 @@ public class MainWindowController implements Initializable{
 				isSuccess= true;
 		}
 
-		if(isSuccess){
-			if(isBucketViewFront){
-				bucketName= ((Bucket)bucketTableView.getSelectionModel().getSelectedItem()).getName();
-				switchToBuckets(false);
-			}else{
+		if(isSuccess)
+			actionGoInto(null);
+	}
 
+	public void actionGoInto(ActionEvent event){
+		if(isBucketViewFront){
+			if(bucketTableView.getSelectionModel().isEmpty())
+				return;
+
+			bucketName= bucketTableView.getSelectionModel().getSelectedItem().getName();
+			switchToBuckets(false);
+		}else{
+			if(objectTableView.getSelectionModel().isEmpty())
+				return;
+
+			String filename= objectTableView.getSelectionModel().getSelectedItem().getKey();
+
+			if(filename.endsWith("/")){
+				prefix+= Common.getFileName(filename);
+				updateObjectList();
 			}
 		}
 	}
 
-	public void actionGoBack(ActionEvent event){
+	public void actionGoOutTo(ActionEvent event){
+		if(isBucketViewFront){
 
+		}else{
+			if(prefix.equals("")){
+				bucketName= "";
+				switchToBuckets(true);
+			}else{
+				prefix= Common.getParentFile(prefix);
+				System.out.println(prefix);
+				updateObjectList();;
+			}
+		}
 	}
 
-	public void actionGoForward(ActionEvent event){
-
-	}
-
-	public void actionToParentDirectory(ActionEvent event){
-	
-			switchToBuckets(true);
-			updateBucketList();
-
+	public void actionToHome(ActionEvent event){
+		switchToBuckets(true);
+		updateBucketList();
 	}
 
 	public void actionDeleteFiles(ActionEvent event){
-		
-		Client.getS3Client().deleteObject(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
-		
-		updateObjectList();
-		
+		boolean isYes= new DialogWindow().showDialog(Common.MessageType.WARNING, "Are you sure want to delete the selected items", "");
+
+		if(!isBucketViewFront){
+			if(isYes){
+				objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
+					client.getS3Client().deleteObject(bucketName, item.getKey());
+				});
+
+				updateObjectList();
+			}
+		}else{
+			if(isYes){
+				bucketTableView.getSelectionModel().getSelectedItems().forEach(item->{
+					client.getS3Client().deleteBucket(item.getName());
+				});
+
+				updateBucketList();
+			}
+		}
 	}
 
 	public void actionDownloadFiles(ActionEvent event){
-		FileChooser fileChooser = new FileChooser();
-		  
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All Files (*.*)", "*.*");
-        fileChooser.getExtensionFilters().add(extFilter);
-        
-        File file = fileChooser.showSaveDialog(null);
-        
-        fileChooser.setInitialFileName(String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
-        
-        if(file != null){
-        	
-        	
-//        	File localFile = new File(String.valueOf(((S3ObjectSummary) selectedFile).getKey()));
+		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
+			String filename= Common.getFileName(item.getKey());
+			fileChooser.setInitialFileName(filename);
 
-        	
-//        	Client.getS3Client().getObject(
-//    		        new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())), localFile
-//    		        );
-            
-        }
-//    	s3.getObject(
-//		        new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())),
-//		        new File("~/Downloads" + String.valueOf(((S3ObjectSummary) selectedFile).getKey()))		        
-//		        );
-        
-        client.getTransferManager().download(new GetObjectRequest(String.valueOf(bucketName), String.valueOf(((S3ObjectSummary) selectedFile).getKey())), file);
-
+			File file= fileChooser.showSaveDialog(Views.instance().getPrimaryStage());
+			client.getTransferManager().download(bucketName, item.getKey(), file);
+		});
 	}
-	
-
 
 	public void actionUploadFiles(ActionEvent event){
-		File file;
-		FileChooser fileChooser = new FileChooser();
-		 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All Files (*.*)", "*.*");
-        fileChooser.getExtensionFilters().add(extFilter);
-       
-        file = fileChooser.showOpenDialog(null);
-        
-        Client.getS3Client().putObject(String.valueOf(bucketName), file.getName(), file);
-        
+        File file = fileChooser.showOpenDialog(Views.instance().getPrimaryStage());
+
+		client.getTransferManager().upload(bucketName, file.getName(), file);
+		//client.getS3Client().putObject(bucketName, file.getName(), file);
+
         updateObjectList();
-       
-	}
-
-	public void actionOpenSettings(ActionEvent event){
-
 	}
 
 	public void actionRefreshList(ActionEvent event){
@@ -213,7 +171,7 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionShowAbout(ActionEvent event){
-		new DialogWindow().showDialog("version 0.2 alpha", false);
+		new DialogWindow().showDialog("version 1.0 beta", false);
 	}
 
 	public void actionDragOver(DragEvent event){
@@ -225,24 +183,10 @@ public class MainWindowController implements Initializable{
 		Dragboard gragboard= event.getDragboard();
 		boolean isSuccess= false;
 	}
-	
-	public static boolean isFolderOrFile(String key) {
-		int length1 = key.length();
-		int length2 = key.replace("/", "").length();
-		if(length1 - length2 < 2) {
-			return key != null;
-
-		}
-		else{
-			return (key.indexOf("/") == -1);		
-
-		}
-
-		  
-		}
 
 	public void updateBucketList(){
 		bucketList.setAll(client.getBuckets());
+
 		bNameCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getName()));
 		bTypeCol.setCellValueFactory(data-> new SimpleStringProperty("Bucket"));
 		bOwnerCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getOwner().getDisplayName()));
@@ -253,17 +197,11 @@ public class MainWindowController implements Initializable{
 		objectList.clear();
 
 		if(!bucketName.isEmpty()){
-			//objectList.addAll(client.getObjectSummaries(bucketName));
-			for(S3ObjectSummary objectSummary : client.getObjectSummaries(bucketName)) {
-				  if(isFolderOrFile(objectSummary.getKey())) {
-					  objectList.add(objectSummary);
-				  }
-				  else{
-				  }
-				}
-			oNameCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getKey()));
-			oTypeCol.setCellValueFactory(data-> new SimpleStringProperty(client.getObjectMetadata(bucketName, data.getValue().getKey()).getContentType()));
-			oSizeCol.setCellValueFactory(data-> new SimpleStringProperty(Common.toSizeString(data.getValue().getSize())));
+			objectList.addAll(client.getObjectSummaries(bucketName, prefix));
+
+			oNameCol.setCellValueFactory(data-> new SimpleStringProperty(Common.getFileName(data.getValue().getKey())));
+			//oTypeCol.setCellValueFactory(data-> new SimpleStringProperty(client.getObjectMetadata(bucketName, data.getValue().getKey()).getContentType()));
+			oSizeCol.setCellValueFactory(data-> new SimpleStringProperty(Common.getSizeString(data.getValue().getSize())));
 			oOwnerCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getOwner().getDisplayName()));
 			oDateModifiedCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getLastModified().toString()));
 			oEtagCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getETag()));

@@ -65,7 +65,7 @@
         </MenuBar>
         <FlowPane alignment="CENTER" hgap="5.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: gray;">
           <children>
-            <Button id="backButton" mnemonicParsing="false" onAction="#actionGoBack" text="">
+            <Button id="backButton" mnemonicParsing="false" onAction="#actionGoOutTo" text="">
               <graphic>
                 <ImageView fitHeight="18.0" fitWidth="18.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                   <image>
@@ -77,19 +77,7 @@
                 <Tooltip autoHide="true" contentDisplay="CENTER" text="Go Back" />
               </tooltip>
             </Button>
-            <Button id="parentButton" mnemonicParsing="false" text="">
-              <graphic>
-                <ImageView fitHeight="18.0" fitWidth="18.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                    <Image url="@icons/arrow-up.png" />
-                  </image>
-                </ImageView>
-              </graphic>
-              <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="To Parent Directory" />
-              </tooltip>
-            </Button>
-            <Button id="f" mnemonicParsing="false" onAction="#actionGoForward" text="">
+            <Button id="f" mnemonicParsing="false" onAction="#actionGoInto" text="">
               <graphic>
                 <ImageView fitHeight="16.0" fitWidth="16.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                   <image>
@@ -99,6 +87,18 @@
               </graphic>
               <tooltip>
                 <Tooltip autoHide="true" contentDisplay="CENTER" text="Go Forward" />
+              </tooltip>
+            </Button>
+            <Button id="parentButton" fx:id="homeButton" mnemonicParsing="false" onAction="#actionToHome" text="">
+              <graphic>
+                <ImageView fitHeight="18.0" fitWidth="18.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                    <Image url="@icons/home.png" />
+                  </image>
+                </ImageView>
+              </graphic>
+              <tooltip>
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="To Parent Directory" />
               </tooltip>
             </Button>
             <Separator prefWidth="50.0" visible="false" />
@@ -150,18 +150,6 @@
               </graphic>
               <tooltip>
                 <Tooltip autoHide="true" contentDisplay="CENTER" text="Download Selected File" />
-              </tooltip>
-            </Button>
-            <Button id="f" mnemonicParsing="false" onAction="#actionOpenSettings" text="">
-              <graphic>
-                <ImageView fitHeight="18.0" fitWidth="18.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                    <Image url="@icons/settings.png" />
-                  </image>
-                </ImageView>
-              </graphic>
-              <tooltip>
-                <Tooltip autoHide="true" contentDisplay="CENTER" text="Open Settings" />
               </tooltip>
             </Button>
           </children>
