@@ -1,5 +1,6 @@
 package controllers;
 
+import com.amazonaws.services.s3.model.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,7 +19,8 @@ import utilities.Common;
 
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import javafx.stage.*;
+import java.util.*;
+import java.util.stream.*;
 import views.*;
 
 public class MainWindowController implements Initializable{
@@ -115,13 +117,11 @@ public class MainWindowController implements Initializable{
 		if(isBucketViewFront){
 
 		}else{
-			if(prefix.equals("")){
-				bucketName= "";
+			if(prefix.equals(""))
 				switchToBuckets(true);
-			}else{
+			else{
 				prefix= Common.getParentFile(prefix);
-				System.out.println(prefix);
-				updateObjectList();;
+				updateObjectList();
 			}
 		}
 	}
@@ -145,6 +145,10 @@ public class MainWindowController implements Initializable{
 		}else{
 			if(isYes){
 				bucketTableView.getSelectionModel().getSelectedItems().forEach(item->{
+					client.getS3Client().listObjects(item.getName()).getObjectSummaries().forEach(i-> {
+						client.getS3Client().deleteObject(item.getName(), i.getKey());
+					});
+
 					client.getS3Client().deleteBucket(item.getName());
 				});
 
@@ -172,9 +176,7 @@ public class MainWindowController implements Initializable{
         updateObjectList();
 	}
 
-	public void actionRefreshList(ActionEvent event){
-		updateObjectList();
-	}
+	public void actionRefreshList(ActionEvent event){ updateObjectList(); }
 
 	public void actionShowAbout(ActionEvent event){
 		new DialogWindow().showDialog("version 1.0 beta", false);
@@ -185,6 +187,8 @@ public class MainWindowController implements Initializable{
 
 		if(dragboard.hasFiles())
 			event.acceptTransferModes(TransferMode.COPY);
+		else if(dragboard.hasContent(DataFormat.FILES))
+			System.out.println("Has files");
 		else
 			event.consume();
 	}
@@ -195,7 +199,8 @@ public class MainWindowController implements Initializable{
 
 		if(dragboard.hasFiles()){
 			dragboard.getFiles().forEach(file->{
-				client.getTransferManager().upload(bucketName, prefix+ file.getName(), file);
+				//client.getTransferManager().upload(bucketName, prefix+ file.getName(), file);
+				System.out.println(file.getName());
 				updateObjectList();
 			});
 
@@ -207,17 +212,14 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionDragDetected(MouseEvent event){
-		Dragboard dragboard= objectTableView.startDragAndDrop(TransferMode.MOVE);
-		
-		event.consume();
-	}
+		System.out.println("dragDetected");
+		Dragboard dragboard= objectTableView.startDragAndDrop(TransferMode.COPY);
+		ClipboardContent content= new ClipboardContent();
 
-	public void actionMouseDragOver(MouseDragEvent event){
+		List<String> paths= objectTableView.getSelectionModel().getSelectedItems().stream().map(item-> item.getKey()).collect(Collectors.toList());
+		content.putFilesByPath(paths);
 
-		event.consume();
-	}
-
-	public void actionMouseDragReleased(MouseDragEvent event){
+		dragboard.setContent(content);
 
 		event.consume();
 	}
