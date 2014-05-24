@@ -36,8 +36,8 @@ public class DialogWindow extends Stage{
 	public boolean showDialog(MessageType type, String message, String title){ return showDialog(type, message, title, true); }
 
 	public boolean showDialog(MessageType type, String message, String title, boolean showCancel){
-		DialogController controller= (DialogController)Views.instance().getController(Common.SceneType.Dialog);
-		
+		DialogController controller= (DialogController) Views.instance().getController(Common.SceneType.Dialog);
+
 		controller.setMessage(type, message);
 		controller.requireCancelButton(showCancel);
 

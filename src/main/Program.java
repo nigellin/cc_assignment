@@ -1,5 +1,6 @@
 package main;
 
+import controllers.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import utilities.Common.*;
@@ -21,7 +22,13 @@ public class Program extends Application{
 		primaryStage.setResizable(false);
 		primaryStage.show();
 
-		primaryStage.setOnCloseRequest(event->{ System.exit(0); });
+		primaryStage.setOnCloseRequest(event->{
+			if(new DialogWindow().showDialog(MessageType.WARNING, "Are your sure want to exit?", "Exit Confirmation")){
+				primaryStage.close();
+				System.exit(0);
+			}else
+				event.consume();
+		});
 	}
 
 	public static void main(String args[]){

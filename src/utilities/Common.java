@@ -127,6 +127,7 @@ public class Common{
 	public enum SceneType{
 		Authentication("Authentication - import key property file"),
 		Dialog("Dialog Window"),
+		InputDialog("Input Dialog Window"),
 		MainWindow("Main Window");
 
 		private final String title;

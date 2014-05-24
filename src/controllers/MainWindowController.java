@@ -1,6 +1,5 @@
 package controllers;
 
-import com.amazonaws.services.s3.model.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -57,19 +56,12 @@ public class MainWindowController implements Initializable{
 	public void initialize(URL url, ResourceBundle rb){
 		bucketTableView.setItems(bucketList);
 		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setItems(objectList);
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		objectTableView.getSelectionModel().selectedItemProperty().addListener((observale, newValue, oldValue)->{
-
-		});
-
-		bucketTableView.getSelectionModel().selectedItemProperty().addListener((observale, newValue, oldValue)->{
-
-		});
 	}
 
 	public void processSelectedItems(Event event){
