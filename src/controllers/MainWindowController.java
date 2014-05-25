@@ -61,11 +61,12 @@ public class MainWindowController implements Initializable{
 	public void initialize(URL url, ResourceBundle rb){
 		bucketTableView.setItems(bucketList);
 		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		bucketTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setItems(objectList);
-		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+		objectTableView.getSelectionModel().selectedItemProperty().addListener(event-> disableButtons());
 
 	}
 
@@ -155,52 +156,45 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionAddItem(ActionEvent event){
-		
-		
+
+
 		String result = new InputDialogWindow().showDialog();
 		if (!result.isEmpty()){
 			if(isBucketViewFront){
 				if(client.getS3Client().doesBucketExist(result)){
+<<<<<<< HEAD
 					
 					new DialogWindow().showDialog(Common.MessageType.WARNING, "A bucket with this name already exists", "");
 					
 				}else{
 					
+=======
+					new DialogWindow().showDialog(Common.MessageType.ERROR, "A bucket with this name already exists");
+				}else{
+>>>>>>> FETCH_HEAD
 					result.toLowerCase();
-					
 					Bucket bucket = client.getS3Client().createBucket(result);
-					
 					updateBucketList();
 				}
 			}else{
+<<<<<<< HEAD
 				
+=======
+>>>>>>> FETCH_HEAD
 				boolean isConflict= objectList.stream().anyMatch(item-> result.equals(Common.getFileName(item.getKey())));
-				
 					if(isConflict){
-						if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite extist file")){
-							
-							
+						if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite existed file")){
+						client.getS3Client().putObject(bucketName, result, new ByteArrayInputStream("".getBytes()), new ObjectMetadata());
+						updateObjectList();
+					}else{
 						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
-						
+
 						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
 						updateObjectList();
 					}
-					else{
-						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
-						
-						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
-						updateObjectList();
-					}
-					
 				}
-
-
-			
 			}
-		
 		}
-
-		
 	}
 
 	public void actionDownloadFiles(ActionEvent event){
