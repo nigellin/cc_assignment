@@ -14,7 +14,7 @@ public class InputDialogController implements Initializable{
 	@FXML private TextField inputField;
 	@FXML private Text		message;
 
-	@Override
+	@Override 
 	public void initialize(URL url, ResourceBundle rb){}
 
 	public String getResult(){
