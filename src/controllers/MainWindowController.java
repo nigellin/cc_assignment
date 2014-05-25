@@ -1,6 +1,5 @@
 package controllers;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,11 +17,11 @@ import utilities.Common;
 import utilities.Common.MessageType;
 
 import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.util.*;
 import java.util.stream.*;
+import javafx.application.*;
 
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import views.*;
@@ -35,9 +34,8 @@ public class MainWindowController implements Initializable{
 
 	@FXML private TableView<S3ObjectSummary>	objectTableView;
 	@FXML private TableView<Bucket>				bucketTableView;
-	@FXML private TableColumn<S3ObjectSummary, String> oNameCol, oSizeCol, oTypeCol,
-		oOwnerCol, oDateModifiedCol, oEtagCol;
-	@FXML private TableColumn<Bucket, String> bNameCol, bTypeCol, bOwnerCol, bDateCreatedCol;
+	@FXML private TableColumn<S3ObjectSummary, String> oNameCol, oSizeCol, oOwnerCol, oDateModifiedCol, oEtagCol;
+	@FXML private TableColumn<Bucket, String> bNameCol, bOwnerCol, bDateCreatedCol;
 
 	private final ObservableList<S3ObjectSummary>	objectList;
 	private final ObservableList<Bucket>			bucketList;
@@ -129,7 +127,7 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionDeleteFiles(ActionEvent event){
-		boolean isYes= new DialogWindow().showDialog(Common.MessageType.WARNING, "Are you sure want to delete the selected items", "");
+		boolean isYes= new DialogWindow().showDialog(Common.MessageType.WARNING, "Are you sure want to delete selected items", "Deletion Confirm");
 
 		if(!isBucketViewFront){
 			if(isYes){
@@ -219,8 +217,7 @@ public class MainWindowController implements Initializable{
 
 		if(dragboard.hasFiles()){
 			dragboard.getFiles().forEach(file->{
-				//client.getTransferManager().upload(bucketName, prefix+ file.getName(), file);
-				System.out.println(file.getName());
+				client.getTransferManager().upload(bucketName, prefix+ file.getName(), file);
 				updateObjectList();
 			});
 
@@ -265,34 +262,38 @@ public class MainWindowController implements Initializable{
 				deleteButton.setDisable(true);
 			}else{
 				deleteButton.setDisable(false);
-
-
 			}
 		}
 	}
 
 	public void updateBucketList(){
-		bucketList.setAll(client.getBuckets());
+		Platform.runLater(()-> {
+			bucketList.setAll(client.getBuckets());
 
-		bNameCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getName()));
-		bTypeCol.setCellValueFactory(data-> new SimpleStringProperty("Bucket"));
-		bOwnerCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getOwner().getDisplayName()));
-		bDateCreatedCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getCreationDate().toString()));
+			bNameCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getName()));
+			bOwnerCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getOwner().getDisplayName()));
+			bDateCreatedCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getCreationDate().toString()));
+		});
 	}
 
 	public void updateObjectList(){
-		objectList.clear();
+		Platform.runLater(()->{
+			objectList.clear();
 
-		if(!bucketName.isEmpty()){
-			objectList.addAll(client.getObjectSummaries(bucketName, prefix));
+			if(!bucketName.isEmpty()){
+				objectList.addAll(client.getObjectSummaries(bucketName, prefix));
 
-			oNameCol.setCellValueFactory(data-> new SimpleStringProperty(Common.getFileName(data.getValue().getKey())));
-			//oTypeCol.setCellValueFactory(data-> new SimpleStringProperty(client.getObjectMetadata(bucketName, data.getValue().getKey()).getContentType()));
-			oSizeCol.setCellValueFactory(data-> new SimpleStringProperty(Common.getSizeString(data.getValue().getSize())));
-			oOwnerCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getOwner().getDisplayName()));
-			oDateModifiedCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getLastModified().toString()));
-			oEtagCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getETag()));
-		}
+				oNameCol.setCellValueFactory(data-> new SimpleStringProperty(Common.getFileName(data.getValue().getKey())));
+				oSizeCol.setCellValueFactory(data-> new SimpleStringProperty(Common.getSizeString(data.getValue().getSize())));
+				oOwnerCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getOwner().getDisplayName()));
+				oDateModifiedCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getLastModified().toString()));
+				oEtagCol.setCellValueFactory(data-> new SimpleStringProperty(data.getValue().getETag()));
+			}
+		});
+	}
+
+	public void uploadFiles(){
+		
 	}
 
 	public void switchToBuckets(boolean toBuckets){
@@ -303,10 +304,13 @@ public class MainWindowController implements Initializable{
 			bucketName	= "";
 			prefix		= "";
 
+			Views.instance().getPrimaryStage().setTitle("Buckets");
 			updateBucketList();
 		}else{
 			bucketTableView.toBack();
 			isBucketViewFront= false;
+
+			Views.instance().getPrimaryStage().setTitle("Items");
 			updateObjectList();
 		}
 	}
