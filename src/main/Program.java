@@ -23,10 +23,9 @@ public class Program extends Application{
 		primaryStage.show();
 
 		primaryStage.setOnCloseRequest(event->{
-			if(new DialogWindow().showDialog(MessageType.WARNING, "Are your sure want to exit?", "Exit Confirmation")){
-				primaryStage.close();
+			if(new DialogWindow().showDialog(MessageType.WARNING, "Are your sure want to exit?", "Exit Confirmation"))
 				System.exit(0);
-			}else
+			else
 				event.consume();
 		});
 	}

@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -12,14 +13,17 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
-
 import main.Client;
 import utilities.Common;
+import utilities.Common.MessageType;
 
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+
 import java.util.*;
 import java.util.stream.*;
+
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import views.*;
 
@@ -151,7 +155,57 @@ public class MainWindowController implements Initializable{
 		}
 	}
 
-	public void actionAddItem(ActionEvent event){}
+	public void actionAddItem(ActionEvent event){
+		
+		
+		String result = new InputDialogWindow().showDialog();
+		if (!result.isEmpty()){
+			if(isBucketViewFront){
+				if(client.getS3Client().doesBucketExist(result)){
+					
+					new DialogWindow().showDialog(Common.MessageType.WARNING, "A bucket with this name already exists", "");
+					
+				}
+				else{
+					
+					result.toLowerCase();
+					
+					Bucket bucket = client.getS3Client().createBucket(result);
+					
+					updateBucketList();
+				}
+			}
+			
+			else{
+				
+				boolean isConflict= objectList.stream().anyMatch(item-> result.equals(Common.getFileName(item.getKey())));
+				
+					if(isConflict){
+						if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite extist file")){
+							
+							
+						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
+						
+						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
+						updateObjectList();
+					}
+					else{
+						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
+						
+						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
+						updateObjectList();
+					}
+					
+				}
+
+
+			
+			}
+		
+		}
+
+		
+	}
 
 	public void actionDownloadFiles(ActionEvent event){
 		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
