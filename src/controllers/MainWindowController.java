@@ -1,35 +1,8 @@
 package controllers;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
-<<<<<<< HEAD
-import java.util.stream.Collectors;
-
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-=======
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.*;
@@ -38,18 +11,12 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
->>>>>>> FETCH_HEAD
 import javafx.stage.FileChooser;
 
 import main.Client;
 import utilities.Common;
-import views.Views;
 
 import com.amazonaws.services.s3.model.Bucket;
-<<<<<<< HEAD
-import com.amazonaws.services.s3.model.ObjectMetadata;
-=======
->>>>>>> FETCH_HEAD
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import java.util.*;
 import java.util.stream.*;
@@ -123,7 +90,6 @@ public class MainWindowController implements Initializable{
 		if(isBucketViewFront){
 			if(bucketTableView.getSelectionModel().isEmpty())
 				return;
-<<<<<<< HEAD
 
 			bucketName= bucketTableView.getSelectionModel().getSelectedItem().getName();
 			switchToBuckets(false);
@@ -133,17 +99,6 @@ public class MainWindowController implements Initializable{
 
 			String filename= objectTableView.getSelectionModel().getSelectedItem().getKey();
 
-=======
-
-			bucketName= bucketTableView.getSelectionModel().getSelectedItem().getName();
-			switchToBuckets(false);
-		}else{
-			if(objectTableView.getSelectionModel().isEmpty())
-				return;
-
-			String filename= objectTableView.getSelectionModel().getSelectedItem().getKey();
-
->>>>>>> FETCH_HEAD
 			if(filename.endsWith("/")){
 				prefix+= Common.getFileName(filename);
 				updateObjectList();
@@ -177,7 +132,6 @@ public class MainWindowController implements Initializable{
 				objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
 					client.getS3Client().deleteObject(bucketName, item.getKey());
 				});
-<<<<<<< HEAD
 
 				updateObjectList();
 			}
@@ -194,46 +148,6 @@ public class MainWindowController implements Initializable{
 				updateBucketList();
 			}
 		}
-	}
-
-	public void actionAddItem(ActionEvent event){
-		
-		if(isBucketViewFront){
-				
-				Bucket bucket = client.getS3Client().createBucket(new InputDialogWindow().showDialog());
-
-				updateBucketList();
-			}
-		
-		else{
-		
-			ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
-	
-			client.getS3Client().putObject(bucketName, new InputDialogWindow().showDialog(), input, new ObjectMetadata());
-			updateObjectList();
-		
-		
-		}
-
-		
-=======
-
-				updateObjectList();
-			}
-		}else{
-			if(isYes){
-				bucketTableView.getSelectionModel().getSelectedItems().forEach(item->{
-					client.getS3Client().listObjects(item.getName()).getObjectSummaries().forEach(i-> {
-						client.getS3Client().deleteObject(item.getName(), i.getKey());
-					});
-
-					client.getS3Client().deleteBucket(item.getName());
-				});
-
-				updateBucketList();
-			}
-		}
->>>>>>> FETCH_HEAD
 	}
 
 	public void actionAddItem(ActionEvent event){}
@@ -304,8 +218,6 @@ public class MainWindowController implements Initializable{
 
 		event.consume();
 	}
-<<<<<<< HEAD
-=======
 
 	public void disableButtons(){
 		if(isBucketViewFront){
@@ -336,7 +248,6 @@ public class MainWindowController implements Initializable{
 			}
 		}
 	}
->>>>>>> FETCH_HEAD
 
 	public void updateBucketList(){
 		bucketList.setAll(client.getBuckets());

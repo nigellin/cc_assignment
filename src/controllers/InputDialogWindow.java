@@ -35,9 +35,5 @@ public class InputDialogWindow extends Stage{
 		showAndWait();
 
 		return controller.getResult();
-<<<<<<< HEAD
-		
-=======
->>>>>>> FETCH_HEAD
 	}
 }
