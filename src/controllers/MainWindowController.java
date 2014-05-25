@@ -159,24 +159,21 @@ public class MainWindowController implements Initializable{
 		if (!result.isEmpty()){
 			if(isBucketViewFront){
 				if(client.getS3Client().doesBucketExist(result)){
-					new DialogWindow().showDialog(Common.MessageType.WARNING, "A bucket with this name already exists", "");
+					new DialogWindow().showDialog(Common.MessageType.WARNING, "A bucket with this name already exists");
 				}else{
 					Bucket bucket = client.getS3Client().createBucket(result.toLowerCase());
 					updateBucketList();
 				}
 			}else{
-				boolean isConflict= objectList.stream().anyMatch(item-> result.equals(Common.getFileName(item.getKey())));
-				if(isConflict){
-					if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite existed file")){
+				boolean isConflict	= objectList.stream().anyMatch(item-> result.equals(Common.getFileName(item.getKey())));
+				boolean accept		= true;
 
-						client.getS3Client().putObject(bucketName, result, new ByteArrayInputStream("".getBytes()), new ObjectMetadata());
-						updateObjectList();
-					}else{
-						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
+				if(isConflict)
+					accept= new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite existed file");
 
-						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
-						updateObjectList();
-					}
+				if(accept){
+					client.getS3Client().putObject(bucketName, result, new File(prefix+ result));
+					updateObjectList();
 				}
 			}
 		}
