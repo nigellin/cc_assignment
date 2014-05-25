@@ -47,7 +47,16 @@ public class Client{
 	public List<Bucket> getBuckets(){ return s3Client.listBuckets(); }
 
 	public List<S3ObjectSummary> getObjectSummaries(String bucketName, String prefix){
-		return s3Client.listObjects(bucketName, prefix).getObjectSummaries().stream().filter(s-> Common.isSubFile(s.getKey(), prefix)).collect(Collectors.toList());
+		return getObjectSummaries(bucketName, prefix, true);
+	}
+
+	public List<S3ObjectSummary> getObjectSummaries(String bucketName, String prefix, boolean noSub){
+		Stream<S3ObjectSummary> stream= s3Client.listObjects(bucketName, prefix).getObjectSummaries().stream();
+
+		if(noSub)
+			return stream.filter(s-> Common.isSubFile(s.getKey(), prefix)).collect(Collectors.toList());
+		else
+			return stream.collect(Collectors.toList());
 	}
 
 	public ObjectMetadata	getObjectMetadata(String bucketName, String key){ return s3Client.getObjectMetadata(bucketName, key); }

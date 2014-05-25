@@ -188,20 +188,9 @@ public class MainWindowController implements Initializable{
 
 	public void actionDownloadFiles(ActionEvent event){
 		File dir= dirChooser.showDialog(Views.instance().getPrimaryStage());
+		dirChooser.setTitle("save files to directory...");
 
-		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
-			if(item.getKey().endsWith("/")){
-				String foldername= item.getKey().substring(0, item.getKey().length()- 2); // remove slash at end
-				File folder= new File(dir.getAbsolutePath()+ Common.getFileName(item.getKey()));
-
-				if(folder.mkdir()){
-
-				}else
-					new DialogWindow().showDialog(MessageType.ERROR, "unable to create folder "+ folder.getName());
-			}else{
-
-			}
-		});
+		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> downloadFile(item.getKey(), dir.getAbsolutePath()));
 	}
 
 	public void actionUploadFiles(ActionEvent event){
@@ -229,11 +218,7 @@ public class MainWindowController implements Initializable{
 		boolean isSuccess= false;
 
 		if(dragboard.hasFiles()){
-			dragboard.getFiles().forEach(file->{
-				client.getTransferManager().upload(bucketName, prefix+ file.getName(), file);
-				updateObjectList();
-			});
-
+			dragboard.getFiles().forEach(file-> uploadFile(file));
 			isSuccess= true;
 		}
 
@@ -242,14 +227,13 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionDragDetected(MouseEvent event){
-		System.out.println("dragDetected");
-		Dragboard dragboard= objectTableView.startDragAndDrop(TransferMode.COPY);
+//		Dragboard dragboard= objectTableView.startDragAndDrop(TransferMode.COPY);
 		ClipboardContent content= new ClipboardContent();
 
-		List<String> paths= objectTableView.getSelectionModel().getSelectedItems().stream().map(item-> item.getKey()).collect(Collectors.toList());
-		content.putFilesByPath(paths);
-
-		dragboard.setContent(content);
+//		List<String> paths= objectTableView.getSelectionModel().getSelectedItems().stream().map(item-> item.getKey()).collect(Collectors.toList());
+//		content.putFilesByPath(paths);
+//
+//		dragboard.setContent(content);
 
 		event.consume();
 	}
@@ -305,7 +289,31 @@ public class MainWindowController implements Initializable{
 		});
 	}
 
+	public void downloadFile(String filepath, String parentpath){
+		File file= new File(parentpath+ "/"+ filepath);
+
+		if(filepath.endsWith("/")){
+			if(!file.exists())
+				file.mkdir();
+
+			client.getObjectSummaries(bucketName, prefix, false).stream().
+				filter(item-> item.getKey().startsWith(filepath)).
+				filter(item-> !item.getKey().equals(filepath)).
+				forEach(item-> downloadFile(item.getKey(), parentpath));
+		}else{
+			if(file.exists())
+				return;
+
+			client.getTransferManager().download(bucketName, filepath, file);
+		}
+	}
+
 	public void uploadFile(File file){
+		if(client.getObjectSummaries(bucketName, prefix).stream().anyMatch(item-> item.getKey().endsWith(file.getName()))){
+			if(!new DialogWindow().showDialog(MessageType.WARNING, "item '"+ file.getName()+"' already existed within this folder, do you want to overwrite it?", "Overwrite Confirm"))
+				return;
+		}
+
 		PutObjectRequest request= new PutObjectRequest(bucketName, prefix+ file.getName(), file);
 		Upload upload= client.getTransferManager().upload(request);
 
@@ -314,13 +322,13 @@ public class MainWindowController implements Initializable{
 				case ProgressEvent.COMPLETED_EVENT_CODE:
 					updateObjectList();
 					break;
-					
+
 				case ProgressEvent.FAILED_EVENT_CODE:
 					try{
 						AmazonClientException ace= upload.waitForException();
 						if(ace!= null)
 							throw new InterruptedException(ace.getMessage());
-					}catch(InterruptedException ie){ new DialogWindow().showDialog(MessageType.ERROR, ie.getMessage(), "", false); }
+					}catch(InterruptedException ie){ new DialogWindow().showDialog(MessageType.ERROR, ie.getMessage(), "Upload Failed", false); }
 
 					break;
 			}

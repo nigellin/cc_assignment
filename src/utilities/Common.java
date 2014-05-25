@@ -78,15 +78,12 @@ public class Common{
 	}
 
 	public static String getSizeString(double size){
-		String suffix= "bits";
+		String suffix= "bytes";
 
 		if(size== 0.0)
 			return "--";
 
-		if(size>= 8){
-			size/= 8;
-			suffix= "bytes";
-		}if(size>= 1024){
+		if(size>= 1024){
 			size/= 1024;
 			suffix= "KB";
 		}else if(size>= 1000* 1000){
