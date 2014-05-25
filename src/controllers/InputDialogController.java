@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.text.*;
 import javafx.stage.*;
+import utilities.*;
 
 public class InputDialogController implements Initializable{
 	@FXML private TextField inputField;
@@ -34,7 +35,10 @@ public class InputDialogController implements Initializable{
 	}
 
 	public void actionClickedOk(ActionEvent event){
-		close();
+		if(inputField.getText().isEmpty()){
+			new DialogWindow().showDialog(Common.MessageType.WARNING, "the value is require", "Input Warning", false);
+		}else
+			close();
 	}
 
 	public void actionClickedCancel(ActionEvent event){
