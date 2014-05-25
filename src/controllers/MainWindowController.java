@@ -24,7 +24,6 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.transfer.*;
 
 import java.util.*;
-import java.util.stream.*;
 import javafx.application.*;
 
 import javafx.scene.control.TableView.TableViewSelectionModel;
@@ -189,7 +188,6 @@ public class MainWindowController implements Initializable{
 	public void actionDownloadFiles(ActionEvent event){
 		File dir= dirChooser.showDialog(Views.instance().getPrimaryStage());
 		dirChooser.setTitle("save files to directory...");
-
 		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> downloadFile(item.getKey(), dir.getAbsolutePath()));
 	}
 
