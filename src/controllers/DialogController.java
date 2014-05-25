@@ -16,25 +16,26 @@ public class DialogController implements Initializable{
 	@FXML private ImageView icon;
 	@FXML private Text		messageText;
 	@FXML private Button	cancelButton;
-	private int result;
+	private boolean			result;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb){
-		result= 0;
+		result= false;
 	}
 
 	public void actionClickedOk(ActionEvent event){
-		result= 1;
+		result= true;
 		close();
 	}
 
 	public void actionClickedCancel(ActionEvent event){
-		result= -1;
+		result= false;
 		close();
 	}
 
-	public int getResult(){ return result; }
-
+	public boolean getResult(){ return result; }
+	public void setResult(boolean result){ this.result= result; }
+	
 	public void setMessage(MessageType type, String msg){
 		Platform.runLater(()->{
 			icon.setImage(type.getIconImage());

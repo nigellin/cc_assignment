@@ -42,10 +42,51 @@ public class Common{
 		return properties.getProperty(key);
 	}// get property values
 
-	public static String toSizeString(double size){
-		String suffix= "bytes";
+	public static String getFileName(String filepath){
+		if(filepath.contains("/"))
+			if(filepath.endsWith("/"))
+				filepath= filepath.substring(filepath.substring(0, filepath.length()- 1).lastIndexOf("/")+ 1);
+			else
+				filepath= filepath.substring(filepath.lastIndexOf("/")+ 1);
 
-		if(size>= 1024){
+		return filepath;
+	}
+
+	public static String getParentFile(String filepath){
+		if(!filepath.contains("/"))
+			return "";
+
+		if(filepath.endsWith("/"))
+			filepath= filepath.substring(0, filepath.length()- 1);
+
+		return filepath.substring(0, filepath.lastIndexOf("/")+ 1);
+	}
+
+	public static boolean isSubFile(String filename, String prefix){
+		if(!filename.contains(prefix) || filename.equals(prefix))
+			return false;
+
+		String temp= filename.substring(prefix.length());
+
+		if(!temp.contains("/"))
+			return true;
+
+		if(temp.endsWith("/") && temp.indexOf("/")== temp.lastIndexOf("/"))
+			return true;
+
+		return false;
+	}
+
+	public static String getSizeString(double size){
+		String suffix= "bits";
+
+		if(size== 0.0)
+			return "--";
+
+		if(size>= 8){
+			size/= 8;
+			suffix= "bytes";
+		}if(size>= 1024){
 			size/= 1024;
 			suffix= "KB";
 		}else if(size>= 1000* 1000){
@@ -67,10 +108,6 @@ public class Common{
 		return sizeString.concat(" "+ suffix);
 	}
 
-	public enum FileActions{
-		DELETE, CREATE, DOWNLOAD, MODIFY;
-	}
-
 	public enum MessageType{
 		INFO(Color.CORNFLOWERBLUE, "info"),
 		ERROR(Color.RED, "close"),
@@ -89,7 +126,8 @@ public class Common{
 
 	public enum SceneType{
 		Authentication("Authentication - import key property file"),
-		Dialog("Message Dialog"),
+		Dialog("Dialog Window"),
+		InputDialog("Input Dialog Window"),
 		MainWindow("Main Window");
 
 		private final String title;

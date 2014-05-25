@@ -36,6 +36,7 @@ public class Views{
 	}
 
 	public void switchScene(SceneType type){
+		primaryStage.setTitle(type.getTitle());
 		primaryStage.setScene(scenes.get(type));
 	}
 
