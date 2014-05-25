@@ -1,5 +1,8 @@
 package controllers;
 
+import com.amazonaws.*;
+import com.amazonaws.event.ProgressEvent;
+import com.amazonaws.services.s3.model.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,6 +21,7 @@ import utilities.Common.MessageType;
 
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.transfer.*;
 
 import java.util.*;
 import java.util.stream.*;
@@ -66,11 +70,20 @@ public class MainWindowController implements Initializable{
 		bucketTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)-> disableButtons());
 		
 
+<<<<<<< HEAD
+=======
+		bucketTableView.getSelectionModel().selectedItemProperty().addListener((obverable, oldValue, newValue)-> disableButtons());
+
+>>>>>>> FETCH_HEAD
 		objectTableView.setItems(objectList);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
+<<<<<<< HEAD
 		objectTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)-> disableButtons());
+=======
+		objectTableView.getSelectionModel().selectedItemProperty().addListener((obverable, oldValue, newValue)-> disableButtons());
+>>>>>>> FETCH_HEAD
 	}
 
 	public void processSelectedItems(Event event){
@@ -184,7 +197,7 @@ public class MainWindowController implements Initializable{
 		}
 	}
 
-		public void actionDownloadFiles(ActionEvent event){
+	public void actionDownloadFiles(ActionEvent event){
 		File dir= dirChooser.showDialog(Views.instance().getPrimaryStage());
 
 		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
@@ -195,18 +208,16 @@ public class MainWindowController implements Initializable{
 				if(folder.mkdir()){
 
 				}else
-					new DialogWindow().showDialog(MessageType.ERROR, "unable to create folder "+ folder.getAbsolutePath());
+					new DialogWindow().showDialog(MessageType.ERROR, "unable to create folder "+ folder.getName());
+			}else{
+
 			}
 		});
 	}
 
 	public void actionUploadFiles(ActionEvent event){
-        File file = fileChooser.showOpenDialog(Views.instance().getPrimaryStage());
-
-		client.getTransferManager().upload(bucketName, file.getName(), file);
-		//client.getS3Client().putObject(bucketName, file.getName(), file);
-
-        updateObjectList();
+		List<File> files = fileChooser.showOpenMultipleDialog(Views.instance().getPrimaryStage());
+		files.forEach(file-> uploadFile(file));
 	}
 
 	public void actionRefreshList(ActionEvent event){ updateObjectList(); }
@@ -332,8 +343,31 @@ public class MainWindowController implements Initializable{
 		});
 	}
 
+<<<<<<< HEAD
 	public void uploadFiles(){
 
+=======
+	public void uploadFile(File file){
+		PutObjectRequest request= new PutObjectRequest(bucketName, prefix+ file.getName(), file);
+		Upload upload= client.getTransferManager().upload(request);
+
+		request.setGeneralProgressListener(event-> {
+			switch(event.getEventCode()){
+				case ProgressEvent.COMPLETED_EVENT_CODE:
+					updateObjectList();
+					break;
+					
+				case ProgressEvent.FAILED_EVENT_CODE:
+					try{
+						AmazonClientException ace= upload.waitForException();
+						if(ace!= null)
+							throw new InterruptedException(ace.getMessage());
+					}catch(InterruptedException ie){ new DialogWindow().showDialog(MessageType.ERROR, ie.getMessage(), "", false); }
+
+					break;
+			}
+		});
+>>>>>>> FETCH_HEAD
 	}
 
 	public void switchToBuckets(boolean toBuckets){
