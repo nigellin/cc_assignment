@@ -57,11 +57,12 @@ public class MainWindowController implements Initializable{
 	public void initialize(URL url, ResourceBundle rb){
 		bucketTableView.setItems(bucketList);
 		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		bucketTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setItems(objectList);
-		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+		objectTableView.getSelectionModel().selectedItemProperty().addListener(event-> disableButtons());
 
 	}
 
