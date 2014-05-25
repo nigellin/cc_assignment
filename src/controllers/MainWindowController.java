@@ -66,13 +66,14 @@ public class MainWindowController implements Initializable{
 		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		bucketTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		bucketTableView.getSelectionModel().selectedItemProperty().addListener((obverable, oldValue, newValue)-> disableButtons());
+		bucketTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)-> disableButtons());
+
 
 		objectTableView.setItems(objectList);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-		objectTableView.getSelectionModel().selectedItemProperty().addListener((obverable, oldValue, newValue)-> disableButtons());
+		objectTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)-> disableButtons());
 	}
 
 	public void processSelectedItems(Event event){
@@ -108,6 +109,7 @@ public class MainWindowController implements Initializable{
 				return;
 
 			String filename= objectTableView.getSelectionModel().getSelectedItem().getKey();
+
 
 			if(filename.endsWith("/")){
 				prefix+= Common.getFileName(filename);
@@ -239,29 +241,49 @@ public class MainWindowController implements Initializable{
 	public void disableButtons(){
 		if(isBucketViewFront){
 			backButton.setDisable(true);
+			homeButton.setDisable(true);
+			forwardButton.setDisable(false);
 
 			TableViewSelectionModel<Bucket> model= bucketTableView.getSelectionModel();
 
 			if(model.isEmpty()){
 				deleteButton.setDisable(true);
-				addButton.setDisable(false);
 			}else{
 				deleteButton.setDisable(false);
-				addButton.setDisable(true);
 			}
 		}else{
 			backButton.setDisable(false);
+			homeButton.setDisable(false);
+
 			TableViewSelectionModel<S3ObjectSummary> model= objectTableView.getSelectionModel();
 
 			if(model.isEmpty()){
 				deleteButton.setDisable(true);
+				downloadButton.setDisable(true);
+				uploadButton.setDisable(true);
+				backButton.setDisable(false);
+				homeButton.setDisable(false);
 			}else{
 				deleteButton.setDisable(false);
 			}
+
+//			if(model.getSelectedItem().getKey().endsWith("/"))
+//				forwardButton.setDisable(false);
+//			else
+//				forwardButton.setDisable(true);
 		}
 	}
 
 	public void updateBucketList(){
+		homeButton.setDisable(true);
+		forwardButton.setDisable(true);
+		backButton.setDisable(true);
+		uploadButton.setDisable(true);
+		downloadButton.setDisable(true);
+		deleteButton.setDisable(true);
+
+
+
 		Platform.runLater(()-> {
 			bucketList.setAll(client.getBuckets());
 
@@ -274,6 +296,13 @@ public class MainWindowController implements Initializable{
 	public void updateObjectList(){
 		Platform.runLater(()->{
 			objectList.clear();
+			homeButton.setDisable(false);
+			backButton.setDisable(false);
+			uploadButton.setDisable(false);
+			downloadButton.setDisable(false);
+			forwardButton.setDisable(false);
+
+
 
 			if(!bucketName.isEmpty()){
 				objectList.addAll(client.getObjectSummaries(bucketName, prefix));
