@@ -24,6 +24,7 @@ import java.util.stream.*;
 import javafx.application.*;
 
 import javafx.scene.control.TableView.TableViewSelectionModel;
+import javafx.stage.*;
 import views.*;
 
 public class MainWindowController implements Initializable{
@@ -40,8 +41,8 @@ public class MainWindowController implements Initializable{
 	private final ObservableList<S3ObjectSummary>	objectList;
 	private final ObservableList<Bucket>			bucketList;
 	private final FileChooser		fileChooser;
+	private final DirectoryChooser	dirChooser;
 	private final Client			client;
-
 
 	private String	bucketName, prefix;
 	private boolean isBucketViewFront;
@@ -51,6 +52,7 @@ public class MainWindowController implements Initializable{
 		bucketList	= FXCollections.observableArrayList();
 		client		= Client.instance();
 		fileChooser	= new FileChooser();
+		dirChooser	= new DirectoryChooser();
 		bucketName	= "";
 		prefix		= "";
 	}
@@ -60,11 +62,15 @@ public class MainWindowController implements Initializable{
 		bucketTableView.setItems(bucketList);
 		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		bucketTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		
+		bucketTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)-> disableButtons());
+		
 
-		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setItems(objectList);
+		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
+		objectTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)-> disableButtons());
 	}
 
 	public void processSelectedItems(Event event){
@@ -101,6 +107,7 @@ public class MainWindowController implements Initializable{
 
 			String filename= objectTableView.getSelectionModel().getSelectedItem().getKey();
 
+			
 			if(filename.endsWith("/")){
 				prefix+= Common.getFileName(filename);
 				updateObjectList();
@@ -179,14 +186,14 @@ public class MainWindowController implements Initializable{
 
 		public void actionDownloadFiles(ActionEvent event){
 		File dir= dirChooser.showDialog(Views.instance().getPrimaryStage());
-		
+
 		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
 			if(item.getKey().endsWith("/")){
 				String foldername= item.getKey().substring(0, item.getKey().length()- 2); // remove slash at end
 				File folder= new File(dir.getAbsolutePath()+ Common.getFileName(item.getKey()));
-				
+
 				if(folder.mkdir()){
-					
+
 				}else
 					new DialogWindow().showDialog(MessageType.ERROR, "unable to create folder "+ folder.getAbsolutePath());
 			}
@@ -250,29 +257,49 @@ public class MainWindowController implements Initializable{
 	public void disableButtons(){
 		if(isBucketViewFront){
 			backButton.setDisable(true);
+			homeButton.setDisable(true);
+			forwardButton.setDisable(false);
 
 			TableViewSelectionModel<Bucket> model= bucketTableView.getSelectionModel();
 
 			if(model.isEmpty()){
 				deleteButton.setDisable(true);
-				addButton.setDisable(false);
 			}else{
 				deleteButton.setDisable(false);
-				addButton.setDisable(true);
 			}
 		}else{
 			backButton.setDisable(false);
+			homeButton.setDisable(false);
+			
 			TableViewSelectionModel<S3ObjectSummary> model= objectTableView.getSelectionModel();
 
 			if(model.isEmpty()){
 				deleteButton.setDisable(true);
+				downloadButton.setDisable(true);
+				uploadButton.setDisable(true);
+				backButton.setDisable(false);
+				homeButton.setDisable(false);
 			}else{
 				deleteButton.setDisable(false);
 			}
+			
+//			if(model.getSelectedItem().getKey().endsWith("/"))
+//				forwardButton.setDisable(false);
+//			else
+//				forwardButton.setDisable(true);
 		}
 	}
 
 	public void updateBucketList(){
+		homeButton.setDisable(true);
+		forwardButton.setDisable(true);
+		backButton.setDisable(true);
+		uploadButton.setDisable(true);
+		downloadButton.setDisable(true);
+		deleteButton.setDisable(true);
+
+
+
 		Platform.runLater(()-> {
 			bucketList.setAll(client.getBuckets());
 
@@ -285,6 +312,13 @@ public class MainWindowController implements Initializable{
 	public void updateObjectList(){
 		Platform.runLater(()->{
 			objectList.clear();
+			homeButton.setDisable(false);		
+			backButton.setDisable(false);
+			uploadButton.setDisable(false);
+			downloadButton.setDisable(false);
+			forwardButton.setDisable(false);		
+
+
 
 			if(!bucketName.isEmpty()){
 				objectList.addAll(client.getObjectSummaries(bucketName, prefix));
@@ -299,7 +333,7 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void uploadFiles(){
-		
+
 	}
 
 	public void switchToBuckets(boolean toBuckets){
