@@ -164,8 +164,7 @@ public class MainWindowController implements Initializable{
 					
 					new DialogWindow().showDialog(Common.MessageType.WARNING, "A bucket with this name already exists", "");
 					
-				}
-				else{
+				}else{
 					
 					result.toLowerCase();
 					
@@ -173,9 +172,7 @@ public class MainWindowController implements Initializable{
 					
 					updateBucketList();
 				}
-			}
-			
-			else{
+			}else{
 				
 				boolean isConflict= objectList.stream().anyMatch(item-> result.equals(Common.getFileName(item.getKey())));
 				
