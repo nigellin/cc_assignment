@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 package controllers;
 
 import java.io.ByteArrayInputStream;
@@ -345,4 +343,3 @@ public class MainWindowController implements Initializable{
 		}
 	}
 }
->>>>>>> FETCH_HEAD
