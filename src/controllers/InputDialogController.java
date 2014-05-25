@@ -18,7 +18,9 @@ public class InputDialogController implements Initializable{
 	public void initialize(URL url, ResourceBundle rb){}
 
 	public String getResult(){
-		return inputField.getText();
+		String result= inputField.getText();
+		inputField.setText("");
+		return result;
 	}
 
 	public void setMessage(String msg){
@@ -36,7 +38,7 @@ public class InputDialogController implements Initializable{
 
 	public void actionClickedOk(ActionEvent event){
 		if(inputField.getText().isEmpty()){
-			new DialogWindow().showDialog(Common.MessageType.WARNING, "the value is require", "Input Warning", false);
+			new DialogWindow().showDialog(Common.MessageType.WARNING, "the value is required", "Input Warning", false);
 		}else
 			close();
 	}

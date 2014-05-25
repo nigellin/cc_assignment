@@ -20,6 +20,7 @@ import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import java.util.*;
 import java.util.stream.*;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import views.*;
 
 public class MainWindowController implements Initializable{
@@ -216,6 +217,36 @@ public class MainWindowController implements Initializable{
 		dragboard.setContent(content);
 
 		event.consume();
+	}
+
+	public void disableButtons(){
+		if(isBucketViewFront){
+			backButton.setDisable(true);
+
+			TableViewSelectionModel<Bucket> model= bucketTableView.getSelectionModel();
+
+			if(model.isEmpty()){
+				deleteButton.setDisable(true);
+				addButton.setDisable(false);
+			}else{
+				deleteButton.setDisable(false);
+				addButton.setDisable(true);
+			}
+		}else{
+			backButton.setDisable(false);
+			TableViewSelectionModel<S3ObjectSummary> model= objectTableView.getSelectionModel();
+
+			if(model.isEmpty()){
+				deleteButton.setDisable(true);
+			}else{
+				deleteButton.setDisable(false);
+
+				if(model.getSelectedItems().size()> 1){
+					forwardButton.setDisable(true);
+				}else if(model.getSelectedItem().getKey().endsWith("/"))
+					forwardButton.setDisable(false);
+			}
+		}
 	}
 
 	public void updateBucketList(){
