@@ -5,6 +5,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+<<<<<<< HEAD
 import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -28,14 +29,32 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+=======
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+>>>>>>> FETCH_HEAD
 import javafx.stage.FileChooser;
+
 import main.Client;
 import utilities.Common;
 import views.Views;
 
 import com.amazonaws.services.s3.model.Bucket;
+<<<<<<< HEAD
 import com.amazonaws.services.s3.model.ObjectMetadata;
+=======
+>>>>>>> FETCH_HEAD
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import java.util.*;
+import java.util.stream.*;
+import javafx.scene.control.TableView.TableViewSelectionModel;
+import views.*;
 
 public class MainWindowController implements Initializable{
 	@FXML private StackPane stackPane;
@@ -104,6 +123,7 @@ public class MainWindowController implements Initializable{
 		if(isBucketViewFront){
 			if(bucketTableView.getSelectionModel().isEmpty())
 				return;
+<<<<<<< HEAD
 
 			bucketName= bucketTableView.getSelectionModel().getSelectedItem().getName();
 			switchToBuckets(false);
@@ -113,6 +133,17 @@ public class MainWindowController implements Initializable{
 
 			String filename= objectTableView.getSelectionModel().getSelectedItem().getKey();
 
+=======
+
+			bucketName= bucketTableView.getSelectionModel().getSelectedItem().getName();
+			switchToBuckets(false);
+		}else{
+			if(objectTableView.getSelectionModel().isEmpty())
+				return;
+
+			String filename= objectTableView.getSelectionModel().getSelectedItem().getKey();
+
+>>>>>>> FETCH_HEAD
 			if(filename.endsWith("/")){
 				prefix+= Common.getFileName(filename);
 				updateObjectList();
@@ -146,6 +177,7 @@ public class MainWindowController implements Initializable{
 				objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
 					client.getS3Client().deleteObject(bucketName, item.getKey());
 				});
+<<<<<<< HEAD
 
 				updateObjectList();
 			}
@@ -184,7 +216,27 @@ public class MainWindowController implements Initializable{
 		}
 
 		
+=======
+
+				updateObjectList();
+			}
+		}else{
+			if(isYes){
+				bucketTableView.getSelectionModel().getSelectedItems().forEach(item->{
+					client.getS3Client().listObjects(item.getName()).getObjectSummaries().forEach(i-> {
+						client.getS3Client().deleteObject(item.getName(), i.getKey());
+					});
+
+					client.getS3Client().deleteBucket(item.getName());
+				});
+
+				updateBucketList();
+			}
+		}
+>>>>>>> FETCH_HEAD
 	}
+
+	public void actionAddItem(ActionEvent event){}
 
 	public void actionDownloadFiles(ActionEvent event){
 		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
@@ -252,6 +304,39 @@ public class MainWindowController implements Initializable{
 
 		event.consume();
 	}
+<<<<<<< HEAD
+=======
+
+	public void disableButtons(){
+		if(isBucketViewFront){
+			backButton.setDisable(true);
+
+			TableViewSelectionModel<Bucket> model= bucketTableView.getSelectionModel();
+
+			if(model.isEmpty()){
+				deleteButton.setDisable(true);
+				addButton.setDisable(false);
+			}else{
+				deleteButton.setDisable(false);
+				addButton.setDisable(true);
+			}
+		}else{
+			backButton.setDisable(false);
+			TableViewSelectionModel<S3ObjectSummary> model= objectTableView.getSelectionModel();
+
+			if(model.isEmpty()){
+				deleteButton.setDisable(true);
+			}else{
+				deleteButton.setDisable(false);
+
+				if(model.getSelectedItems().size()> 1){
+					forwardButton.setDisable(true);
+				}else if(model.getSelectedItem().getKey().endsWith("/"))
+					forwardButton.setDisable(false);
+			}
+		}
+	}
+>>>>>>> FETCH_HEAD
 
 	public void updateBucketList(){
 		bucketList.setAll(client.getBuckets());
