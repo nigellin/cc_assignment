@@ -24,6 +24,7 @@ import java.util.stream.*;
 import javafx.application.*;
 
 import javafx.scene.control.TableView.TableViewSelectionModel;
+import javafx.stage.*;
 import views.*;
 
 public class MainWindowController implements Initializable{
@@ -40,8 +41,8 @@ public class MainWindowController implements Initializable{
 	private final ObservableList<S3ObjectSummary>	objectList;
 	private final ObservableList<Bucket>			bucketList;
 	private final FileChooser		fileChooser;
+	private final DirectoryChooser	dirChooser;
 	private final Client			client;
-
 
 	private String	bucketName, prefix;
 	private boolean isBucketViewFront;
@@ -51,6 +52,7 @@ public class MainWindowController implements Initializable{
 		bucketList	= FXCollections.observableArrayList();
 		client		= Client.instance();
 		fileChooser	= new FileChooser();
+		dirChooser	= new DirectoryChooser();
 		bucketName	= "";
 		prefix		= "";
 	}
@@ -61,10 +63,13 @@ public class MainWindowController implements Initializable{
 		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		bucketTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		bucketTableView.getSelectionModel().selectedItemProperty().addListener((obverable, oldValue, newValue)-> disableButtons());
+
 		objectTableView.setItems(objectList);
+		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
+		objectTableView.getSelectionModel().selectedItemProperty().addListener((obverable, oldValue, newValue)-> disableButtons());
 	}
 
 	public void processSelectedItems(Event event){
@@ -179,14 +184,14 @@ public class MainWindowController implements Initializable{
 
 		public void actionDownloadFiles(ActionEvent event){
 		File dir= dirChooser.showDialog(Views.instance().getPrimaryStage());
-		
+
 		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
 			if(item.getKey().endsWith("/")){
 				String foldername= item.getKey().substring(0, item.getKey().length()- 2); // remove slash at end
 				File folder= new File(dir.getAbsolutePath()+ Common.getFileName(item.getKey()));
-				
+
 				if(folder.mkdir()){
-					
+
 				}else
 					new DialogWindow().showDialog(MessageType.ERROR, "unable to create folder "+ folder.getAbsolutePath());
 			}
@@ -299,7 +304,7 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void uploadFiles(){
-		
+
 	}
 
 	public void switchToBuckets(boolean toBuckets){
