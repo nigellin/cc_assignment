@@ -102,6 +102,18 @@
               </tooltip>
             </Button>
             <Separator prefWidth="50.0" visible="false" />
+            <Button id="f" fx:id="addButton" mnemonicParsing="false" onAction="#actionDeleteFiles" text="">
+              <graphic>
+                <ImageView fitHeight="18.0" fitWidth="18.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                    <Image url="@icons/notes_add.png" />
+                  </image>
+                </ImageView>
+              </graphic>
+              <tooltip>
+                <Tooltip autoHide="true" contentDisplay="CENTER" text="Add new item" />
+              </tooltip>
+            </Button>
             <Button id="f" mnemonicParsing="false" onAction="#actionDeleteFiles" text="">
               <graphic>
                 <ImageView fitHeight="18.0" fitWidth="18.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">

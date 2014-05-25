@@ -24,7 +24,7 @@ import views.*;
 
 public class MainWindowController implements Initializable{
 	@FXML private StackPane stackPane;
-	@FXML private Button	backButton,		forwardButton,	homeButton;
+	@FXML private Button	backButton,		forwardButton,	homeButton, addButton;
 	@FXML private Button	uploadButton,	downloadButton, deleteButton;
 	@FXML private VBox		bottomPane;
 
