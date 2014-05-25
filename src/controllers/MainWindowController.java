@@ -149,6 +149,8 @@ public class MainWindowController implements Initializable{
 		}
 	}
 
+	public void actionAddItem(ActionEvent event){}
+
 	public void actionDownloadFiles(ActionEvent event){
 		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
 			String filename= Common.getFileName(item.getKey());

@@ -102,7 +102,7 @@
               </tooltip>
             </Button>
             <Separator prefWidth="50.0" visible="false" />
-            <Button id="f" fx:id="addButton" mnemonicParsing="false" onAction="#actionDeleteFiles" text="">
+            <Button id="f" fx:id="addButton" mnemonicParsing="false" onAction="#actionAddItem" text="">
               <graphic>
                 <ImageView fitHeight="18.0" fitWidth="18.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                   <image>
