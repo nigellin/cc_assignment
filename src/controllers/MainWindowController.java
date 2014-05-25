@@ -61,11 +61,11 @@ public class MainWindowController implements Initializable{
 	public void initialize(URL url, ResourceBundle rb){
 		bucketTableView.setItems(bucketList);
 		bucketTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		bucketTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setItems(objectList);
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 	}
 
@@ -167,10 +167,9 @@ public class MainWindowController implements Initializable{
 			}else{
 				boolean isConflict= objectList.stream().anyMatch(item-> result.equals(Common.getFileName(item.getKey())));
 				if(isConflict){
-					if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite extist file")){
-						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
+					if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite existed file")){
 
-						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
+						client.getS3Client().putObject(bucketName, result, new ByteArrayInputStream("".getBytes()), new ObjectMetadata());
 						updateObjectList();
 					}else{
 						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
@@ -213,8 +212,6 @@ public class MainWindowController implements Initializable{
 
 		if(dragboard.hasFiles())
 			event.acceptTransferModes(TransferMode.COPY);
-		else if(dragboard.hasContent(DataFormat.FILES))
-			System.out.println("Has files");
 		else
 			event.consume();
 	}
@@ -272,10 +269,7 @@ public class MainWindowController implements Initializable{
 			}else{
 				deleteButton.setDisable(false);
 
-				if(model.getSelectedItems().size()> 1){
-					forwardButton.setDisable(true);
-				}else if(model.getSelectedItem().getKey().endsWith("/"))
-					forwardButton.setDisable(false);
+
 			}
 		}
 	}
