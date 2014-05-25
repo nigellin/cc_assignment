@@ -155,55 +155,32 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionAddItem(ActionEvent event){
-		
-		
 		String result = new InputDialogWindow().showDialog();
 		if (!result.isEmpty()){
 			if(isBucketViewFront){
 				if(client.getS3Client().doesBucketExist(result)){
-					
 					new DialogWindow().showDialog(Common.MessageType.WARNING, "A bucket with this name already exists", "");
-					
-				}
-				else{
-					
-					result.toLowerCase();
-					
-					Bucket bucket = client.getS3Client().createBucket(result);
-					
+				}else{
+					Bucket bucket = client.getS3Client().createBucket(result.toLowerCase());
 					updateBucketList();
 				}
-			}
-			
-			else{
-				
+			}else{
 				boolean isConflict= objectList.stream().anyMatch(item-> result.equals(Common.getFileName(item.getKey())));
-				
-					if(isConflict){
-						if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite extist file")){
-							
-							
+				if(isConflict){
+					if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite extist file")){
 						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
-						
+
+						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
+						updateObjectList();
+					}else{
+						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
+
 						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
 						updateObjectList();
 					}
-					else{
-						ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
-						
-						client.getS3Client().putObject(bucketName, result, input, new ObjectMetadata());
-						updateObjectList();
-					}
-					
 				}
-
-
-			
 			}
-		
 		}
-
-		
 	}
 
 	public void actionDownloadFiles(ActionEvent event){
