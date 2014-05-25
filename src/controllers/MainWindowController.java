@@ -177,13 +177,19 @@ public class MainWindowController implements Initializable{
 		}
 	}
 
-	public void actionDownloadFiles(ActionEvent event){
+		public void actionDownloadFiles(ActionEvent event){
+		File dir= dirChooser.showDialog(Views.instance().getPrimaryStage());
+		
 		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> {
-			String filename= Common.getFileName(item.getKey());
-			fileChooser.setInitialFileName(filename);
-
-			File file= fileChooser.showSaveDialog(Views.instance().getPrimaryStage());
-			client.getTransferManager().download(bucketName, item.getKey(), file);
+			if(item.getKey().endsWith("/")){
+				String foldername= item.getKey().substring(0, item.getKey().length()- 2); // remove slash at end
+				File folder= new File(dir.getAbsolutePath()+ Common.getFileName(item.getKey()));
+				
+				if(folder.mkdir()){
+					
+				}else
+					new DialogWindow().showDialog(MessageType.ERROR, "unable to create folder "+ folder.getAbsolutePath());
+			}
 		});
 	}
 
