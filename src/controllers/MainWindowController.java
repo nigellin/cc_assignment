@@ -162,25 +162,13 @@ public class MainWindowController implements Initializable{
 		if (!result.isEmpty()){
 			if(isBucketViewFront){
 				if(client.getS3Client().doesBucketExist(result)){
-<<<<<<< HEAD
-					
-					new DialogWindow().showDialog(Common.MessageType.WARNING, "A bucket with this name already exists", "");
-					
-				}else{
-					
-=======
 					new DialogWindow().showDialog(Common.MessageType.ERROR, "A bucket with this name already exists");
 				}else{
->>>>>>> FETCH_HEAD
 					result.toLowerCase();
 					Bucket bucket = client.getS3Client().createBucket(result);
 					updateBucketList();
 				}
 			}else{
-<<<<<<< HEAD
-				
-=======
->>>>>>> FETCH_HEAD
 				boolean isConflict= objectList.stream().anyMatch(item-> result.equals(Common.getFileName(item.getKey())));
 					if(isConflict){
 						if(new DialogWindow().showDialog(MessageType.WARNING, "Are you want to overwrite existed file")){
