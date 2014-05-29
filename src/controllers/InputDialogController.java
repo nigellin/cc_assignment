@@ -14,7 +14,7 @@ public class InputDialogController implements Initializable{
 	@FXML private TextField inputField;
 	@FXML private Text		message;
 
-	@Override 
+	@Override
 	public void initialize(URL url, ResourceBundle rb){}
 
 	public String getResult(){
@@ -33,18 +33,27 @@ public class InputDialogController implements Initializable{
 
 	public void actionKeyPressed(KeyEvent event){
 		if(event.getCode()== KeyCode.ENTER)
-			close();
+			actionClickedOk(event);
 	}
 
-	public void actionClickedOk(ActionEvent event){
+	public void actionClickedOk(Event event){
+		if(event instanceof KeyEvent)
+			if(((KeyEvent)event).getCode()!= KeyCode.ENTER)
+				return;
+
 		if(inputField.getText().isEmpty()){
 			new DialogWindow().showDialog(Common.MessageType.WARNING, "the value is required", "Input Warning", false);
 		}else
 			close();
 	}
 
-	public void actionClickedCancel(ActionEvent event){
+	public void actionClickedCancel(Event event){
 		inputField.setText("");
+
+		if(event instanceof KeyEvent)
+			if(((KeyEvent)event).getCode()!= KeyCode.ENTER)
+				return;
+
 		close();
 	}
 }

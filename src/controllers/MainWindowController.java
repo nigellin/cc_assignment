@@ -22,6 +22,7 @@ import utilities.Common.MessageType;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.transfer.*;
+import com.amazonaws.util.*;
 
 import java.util.*;
 import javafx.application.*;
@@ -227,15 +228,17 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void actionDragDetected(MouseEvent event){
-//		Dragboard dragboard= objectTableView.startDragAndDrop(TransferMode.COPY);
-		ClipboardContent content= new ClipboardContent();
+		Dragboard dragboard= objectTableView.startDragAndDrop(TransferMode.COPY);
 
-//		List<String> paths= objectTableView.getSelectionModel().getSelectedItems().stream().map(item-> item.getKey()).collect(Collectors.toList());
-//		content.putFilesByPath(paths);
-//
-//		dragboard.setContent(content);
+		if(!objectTableView.getSelectionModel().isEmpty()){
+			ClipboardContent content= new ClipboardContent();
 
-		event.consume();
+			String[] filenames= objectTableView.getSelectionModel().getSelectedItems().stream().map(item-> item.getKey()).toArray(i-> new String[i]);
+			content.putString(StringUtils.join(";", filenames));
+
+			dragboard.setContent(content);
+		}else
+			event.consume();
 	}
 
 	public void disableButtons(){
