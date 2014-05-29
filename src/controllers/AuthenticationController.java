@@ -5,6 +5,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
+import javafx.application.*;
+import javafx.event.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -43,14 +45,16 @@ public class AuthenticationController implements Initializable{
 	private void processAuthenticate(File file){
 		fileField.setText(file.getAbsolutePath());
 
-		try{
-			client.setS3Client(file);
-			((MainWindowController)Views.instance().getController(Common.SceneType.MainWindow)).switchToBuckets(true);
-			Views.instance().switchScene(Common.SceneType.MainWindow);
-		}catch(Exception e){
-			setMessageText(MessageType.ERROR, e instanceof AmazonS3Exception?
-				((AmazonS3Exception)e).getErrorMessage(): e.getMessage());
-		}
+		Platform.runLater(()->{
+			try{
+				client.setS3Client(file);
+				((MainWindowController)Views.instance().getController(Common.SceneType.MainWindow)).switchToBuckets(true);
+				Views.instance().switchScene(Common.SceneType.MainWindow);
+			}catch(Exception e){
+				setMessageText(MessageType.ERROR, e instanceof AmazonS3Exception?
+					((AmazonS3Exception)e).getErrorMessage(): e.getMessage());
+			}
+		});
 	}
 
 	public void actionBrowseFile(ActionEvent event){

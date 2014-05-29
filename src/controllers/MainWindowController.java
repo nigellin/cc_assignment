@@ -69,7 +69,6 @@ public class MainWindowController implements Initializable{
 
 		bucketTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)-> disableButtons());
 
-
 		objectTableView.setItems(objectList);
 		objectTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		objectTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
@@ -110,7 +109,6 @@ public class MainWindowController implements Initializable{
 				return;
 
 			String filename= objectTableView.getSelectionModel().getSelectedItem().getKey();
-
 
 			if(filename.endsWith("/")){
 				prefix+= Common.getFileName(filename);
@@ -191,7 +189,10 @@ public class MainWindowController implements Initializable{
 	public void actionDownloadFiles(ActionEvent event){
 		File dir= dirChooser.showDialog(Views.instance().getPrimaryStage());
 		dirChooser.setTitle("save files to directory...");
-		objectTableView.getSelectionModel().getSelectedItems().forEach(item-> downloadFile(item.getKey(), dir.getAbsolutePath()));
+
+		Platform.runLater(()->{
+			objectTableView.getSelectionModel().getSelectedItems().forEach(item-> downloadFile(item.getKey(), dir.getAbsolutePath()));
+		});
 	}
 
 	public void actionUploadFiles(ActionEvent event){
@@ -225,20 +226,6 @@ public class MainWindowController implements Initializable{
 
 		event.setDropCompleted(isSuccess);
 		event.consume();
-	}
-
-	public void actionDragDetected(MouseEvent event){
-		Dragboard dragboard= objectTableView.startDragAndDrop(TransferMode.COPY);
-
-		if(!objectTableView.getSelectionModel().isEmpty()){
-			ClipboardContent content= new ClipboardContent();
-
-			String[] filenames= objectTableView.getSelectionModel().getSelectedItems().stream().map(item-> item.getKey()).toArray(i-> new String[i]);
-			content.putString(StringUtils.join(";", filenames));
-
-			dragboard.setContent(content);
-		}else
-			event.consume();
 	}
 
 	public void disableButtons(){
@@ -285,8 +272,6 @@ public class MainWindowController implements Initializable{
 		downloadButton.setDisable(true);
 		deleteButton.setDisable(true);
 
-
-
 		Platform.runLater(()-> {
 			bucketList.setAll(client.getBuckets());
 
@@ -297,16 +282,14 @@ public class MainWindowController implements Initializable{
 	}
 
 	public void updateObjectList(){
+		objectList.clear();
+		homeButton.setDisable(false);
+		backButton.setDisable(false);
+		uploadButton.setDisable(false);
+		downloadButton.setDisable(false);
+		forwardButton.setDisable(false);
+
 		Platform.runLater(()->{
-			objectList.clear();
-			homeButton.setDisable(false);
-			backButton.setDisable(false);
-			uploadButton.setDisable(false);
-			downloadButton.setDisable(false);
-			forwardButton.setDisable(false);
-
-
-
 			if(!bucketName.isEmpty()){
 				objectList.addAll(client.getObjectSummaries(bucketName, prefix));
 
@@ -344,24 +327,26 @@ public class MainWindowController implements Initializable{
 				return;
 		}
 
-		PutObjectRequest request= new PutObjectRequest(bucketName, prefix+ file.getName(), file);
-		Upload upload= client.getTransferManager().upload(request);
+		Platform.runLater(()->{
+			PutObjectRequest request= new PutObjectRequest(bucketName, prefix+ file.getName(), file);
+			Upload upload= client.getTransferManager().upload(request);
 
-		request.setGeneralProgressListener(event-> {
-			switch(event.getEventCode()){
-				case ProgressEvent.COMPLETED_EVENT_CODE:
-					updateObjectList();
-					break;
+			request.setGeneralProgressListener(event-> {
+				switch(event.getEventCode()){
+					case ProgressEvent.COMPLETED_EVENT_CODE:
+						updateObjectList();
+						break;
 
-				case ProgressEvent.FAILED_EVENT_CODE:
-					try{
-						AmazonClientException ace= upload.waitForException();
-						if(ace!= null)
-							throw new InterruptedException(ace.getMessage());
-					}catch(InterruptedException ie){ new DialogWindow().showDialog(MessageType.ERROR, ie.getMessage(), "Upload Failed", false); }
+					case ProgressEvent.FAILED_EVENT_CODE:
+						try{
+							AmazonClientException ace= upload.waitForException();
+							if(ace!= null)
+								throw new InterruptedException(ace.getMessage());
+						}catch(InterruptedException ie){ new DialogWindow().showDialog(MessageType.ERROR, ie.getMessage(), "Upload Failed", false); }
 
-					break;
-			}
+						break;
+				}
+			});
 		});
 	}
 

@@ -22,9 +22,6 @@ public class Program extends Application{
 		primaryStage.setResizable(false);
 		primaryStage.show();
 
-		System.out.println(new InputDialogWindow().showDialog("test"));
-		System.out.println(new InputDialogWindow().showDialog("test1"));
-
 		primaryStage.setOnCloseRequest(event->{
 			if(new DialogWindow().showDialog(MessageType.WARNING, "Are your sure want to exit?", "Exit Confirmation"))
 				System.exit(0);
